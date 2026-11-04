@@ -1,0 +1,95 @@
+/* المرحلة 3: CSS */
+STAGES.push({
+  id: 3, icon: '🎨', color: '#ec407a', title: 'تصميم الصفحات CSS', en: 'CSS',
+  desc: 'نلوّن صفحات الويب ونجمّلها: الألوان، الخطوط، المحاذاة، الصناديق، والفئات.',
+  items: [
+  /* ---------------------------------------------------------------- */
+  { type: 'lesson', title: 'الألوان مع CSS', en: 'CSS Colors', cards: [
+    { t: 'intro', img: '🎨', text: 'في كورس HTML بنينا **هيكل** الصفحة. الآن سنتعلّم **CSS** لنجعلها جميلة وملوّنة!\nCSS تعني **Cascading Style Sheets**.' },
+    { t: 'play', lead: 'HTML تبني الصفحة، و**CSS** تلوّنها وتجمّلها 🎨\nنكتب CSS داخل الوسم `<style>`.', lang: 'html', start: '<style>\n  h1 { color: blue; }\n</style>\n<h1>Blue Title</h1>' },
+    { t: 'fill', lead: 'الخاصية `color` تغيّر **لون النص**.', q: 'اجعل العنوان أحمر:', lang: 'css', src: 'h1 { {{0}}: red; }', tokens: ['color', 'size', 'red'], a: ['color'] },
+    { t: 'fill', lead: 'القاعدة تبدأ بـ **المحدِّد** (**Selector**): اسم العنصر الذي نريد تلوينه.', q: 'اجعل **الفقرات** خضراء:', lang: 'css', src: '{{0}} { color: green; }', tokens: ['p', 'h1'], a: ['p'] },
+    { t: 'fill', img: '🟠', imgSmall: 1, q: 'اجعل العنوان برتقالياً:', lang: 'css', src: 'h1 { color: {{0}}; }', tokens: ['orange', 'h1', 'color'], a: ['orange'] },
+    { t: 'fill', lead: 'الشكل: `selector { property: value; }`', q: 'أكمل الرموز:', lang: 'css', src: 'p {{0}} color{{1}} purple; }', tokens: ['{', ':', '('], a: ['{', ':'] },
+    { t: 'play', lead: 'الخاصية `background-color` تغيّر **لون الخلفية**.', lang: 'html', start: '<style>\n  body { background-color: lightyellow; }\n</style>\n<h1>Sunny page</h1>' },
+    { t: 'mcq', q: 'أيّ خاصية تغيّر **لون الخلفية**؟', options: ['`color`', '`background-color`', '`font-size`'], a: 1 },
+    { t: 'fill', img: '💧', imgSmall: 1, q: 'خلفية زرقاء فاتحة للصفحة كلها:', lang: 'css', src: '{{0}} { {{1}}: lightblue; }', tokens: ['body', 'background-color', 'color'], a: ['body', 'background-color'] },
+    { t: 'mcq', code: { lang: 'css', src: 'h1 { color: red; }\np { color: blue; }' }, q: 'ما لون **الفقرة**؟', options: ['أحمر 🔴', 'أزرق 🔵'], a: 1 },
+    { t: 'code', q: 'اجعل لون العنوان `h1` **أحمر** `red`، وخلفية الصفحة `body` بأي لون تحبه.', lang: 'html', start: '<style>\n  h1 {  }\n  body {  }\n</style>\n<h1>My Colorful Page</h1>', checks: [{ sel: 'h1', prop: 'color', eq: 'rgb(255, 0, 0)', msg: 'لون h1 يجب أن يكون red' }, { sel: 'body', prop: 'background-color', notEq: 'rgba(0, 0, 0, 0)', msg: 'أضف background-color للـ body' }], hint: 'داخل `h1 { }` اكتب `color: red;` وداخل `body { }` اكتب `background-color: pink;`', solution: '<style>\n  h1 { color: red; }\n  body { background-color: pink; }\n</style>\n<h1>My Colorful Page</h1>' },
+    { t: 'type', q: 'اكتب خاصية لون النص:', lang: 'css', src: 'h1 { {{0}}: green; }', a: ['color'] },
+    { t: 'recap', points: ['**CSS** تلوّن الصفحة وتُكتب داخل `<style>`', 'الشكل: `selector { property: value; }`', '`color` للنص و `background-color` للخلفية'], next: 'حجم الخط والمحاذاة' },
+  ]},
+  /* ---------------------------------------------------------------- */
+  { type: 'lesson', title: 'حجم الخط والمحاذاة', en: 'Size & Align', cards: [
+    { t: 'mcq', lead: '🔁 مراجعة سريعة', q: '`background-color` تغيّر لون…', options: ['الخلفية', 'النص'], a: 0 },
+    { t: 'play', lead: '`font-size` تغيّر **حجم الخط**، ونكتب الحجم بوحدة `px` (بكسل).', lang: 'html', start: '<style>\n  h1 { font-size: 60px; }\n</style>\n<h1>Huge!</h1>' },
+    { t: 'fill', q: 'غيّر حجم الفقرة:', lang: 'css', src: 'p { {{0}}: 30px; }', tokens: ['font-size', 'color'], a: ['font-size'] },
+    { t: 'mcq', q: 'أيّ خط **أكبر**؟', options: ['`font-size: 10px;`', '`font-size: 50px;`'], a: 1 },
+    { t: 'fill', q: 'اكتب الحجم **24 بكسل**:', lang: 'css', src: 'p { font-size: {{0}}; }', tokens: ['24px', '24', 'px24'], a: ['24px'] },
+    { t: 'play', lead: '`text-align` تحدّد **محاذاة النص**: `center` (وسط)، `right` (يمين)، `left` (يسار).', lang: 'html', start: '<style>\n  h1 { text-align: center; }\n</style>\n<h1>Center</h1>' },
+    { t: 'fill', q: 'ضع العنوان **في المنتصف**:', lang: 'css', src: 'h1 { text-align: {{0}}; }', tokens: ['center', 'middle', 'big'], a: ['center'] },
+    { t: 'play', lead: '`border` تضيف **إطاراً**: السُّمك ثم النوع ثم اللون.', lang: 'html', start: '<style>\n  p { border: 3px solid purple; }\n</style>\n<p>In a frame</p>' },
+    { t: 'fill', q: 'إطار **أحمر** سميك:', lang: 'css', src: 'p { {{0}}: 5px solid {{1}}; }', tokens: ['border', 'red', 'color'], a: ['border', 'red'] },
+    { t: 'order', q: 'رتّب قاعدة CSS:', lang: 'css', lines: ['h1 {', '  color: blue;', '}'] },
+    { t: 'mcq', multi: true, q: 'أيّ الخصائص تغيّر **شكل النص**؟', options: ['`color`', '`font-size`', '`href`'], a: [0, 1] },
+    { t: 'code', q: 'اجعل العنوان `h1` **في المنتصف** وحجمه `40px`.', lang: 'html', start: '<style>\n  h1 {  }\n</style>\n<h1>My Page</h1>', checks: [{ sel: 'h1', prop: 'text-align', eq: 'center', msg: 'أضف text-align: center;' }, { sel: 'h1', prop: 'font-size', eq: '40px', msg: 'أضف font-size: 40px;' }], hint: 'داخل `h1 { }` اكتب سطرين: `text-align: center;` و `font-size: 40px;`', solution: '<style>\n  h1 { text-align: center; font-size: 40px; }\n</style>\n<h1>My Page</h1>' },
+    { t: 'type', q: 'اكتب خاصية المحاذاة:', lang: 'css', src: 'h1 { {{0}}: center; }', a: ['text-align'] },
+    { t: 'recap', points: ['`font-size` لحجم الخط بالـ `px`', '`text-align` للمحاذاة: center / right / left', '`border` لإضافة إطار'], next: 'تمرين: بطاقة عيد ميلاد 🎂' },
+  ]},
+  /* ---------------------------------------------------------------- */
+  { type: 'practice', title: 'بطاقة عيد ميلاد', en: 'Birthday Card', cards: [
+    { t: 'code', img: '🎂', story: 'صديقك عيد ميلاده اليوم! صمّم له **بطاقة تهنئة** ملوّنة بـ CSS.', q: '1) اجعل خلفية الصفحة `body` بأي لون\n2) اجعل العنوان `h1` **في المنتصف**\n3) اجعل حجم العنوان `50px`\n4) اجعل لون العنوان بأي لون تحبه', lang: 'html', start: '<style>\n  body {  }\n  h1 {  }\n</style>\n<h1>Happy Birthday!</h1>\n<p>From your friend</p>', checks: [{ sel: 'body', prop: 'background-color', notEq: 'rgba(0, 0, 0, 0)', msg: 'أضف background-color للـ body' }, { sel: 'h1', prop: 'text-align', eq: 'center', msg: 'أضف text-align: center; للعنوان' }, { sel: 'h1', prop: 'font-size', eq: '50px', msg: 'أضف font-size: 50px; للعنوان' }, { sel: 'h1', prop: 'color', notEq: 'rgb(0, 0, 0)', msg: 'أضف color للعنوان' }], hint: 'داخل `h1 { }` اكتب: `text-align: center; font-size: 50px; color: purple;`', solution: '<style>\n  body { background-color: lightyellow; }\n  h1 { text-align: center; font-size: 50px; color: purple; }\n</style>\n<h1>Happy Birthday!</h1>\n<p>From your friend</p>' },
+    { t: 'code', bug: true, img: '🐞', story: 'هذا الكود **لا يلوّن** العنوان! هناك رمز ناقص في قاعدة CSS.', q: 'أصلح الخطأ ليصبح العنوان أزرق `blue`.', lang: 'html', start: '<style>\n  h1 { color blue; }\n</style>\n<h1>Ocean</h1>', checks: [{ sel: 'h1', prop: 'color', eq: 'rgb(0, 0, 255)', msg: 'العنوان ما زال ليس أزرق. ماذا ينقص بين color و blue؟' }], hint: 'بين الخاصية والقيمة توجد **نقطتان** `:`', solution: '<style>\n  h1 { color: blue; }\n</style>\n<h1>Ocean</h1>' },
+  ]},
+  /* ---------------------------------------------------------------- */
+  { type: 'lesson', title: 'الصناديق', en: 'Boxes', cards: [
+    { t: 'mcq', lead: '🔁 مراجعة سريعة', q: '`font-size` تغيّر:', options: ['حجم الخط', 'لون الخط', 'المحاذاة'], a: 0 },
+    { t: 'play', lead: 'كل عنصر في الصفحة هو **صندوق** (**Box**). نعطيه لون خلفية لنراه!', lang: 'html', start: '<style>\n  p { background-color: lightgreen; }\n</style>\n<p>I am a box!</p>' },
+    { t: 'play', lead: '`padding` هي **المسافة الداخلية** بين النص وحافة الصندوق. قارن بين الفقرتين:', lang: 'html', start: '<style>\n  p { background-color: lightgreen; }\n  .big { padding: 25px; }\n</style>\n<p>No padding</p>\n<p class="big">With padding</p>' },
+    { t: 'fill', q: 'أعطِ الفقرة مسافة داخلية:', lang: 'css', src: 'p { {{0}}: 20px; }', tokens: ['padding', 'color'], a: ['padding'] },
+    { t: 'mcq', q: '`padding` تعني:', options: ['مسافة داخلية', 'لون الخلفية', 'حجم الخط'], a: 0 },
+    { t: 'play', lead: '`border-radius` تجعل **الزوايا دائرية**. شغّل وغيّر الرقم!', lang: 'html', start: '<style>\n  button { background-color: orange; padding: 12px; border-radius: 20px; }\n</style>\n<button>Round button</button>' },
+    { t: 'fill', q: 'زوايا دائرية بمقدار `15px`:', lang: 'css', src: 'button { {{0}}: 15px; }', tokens: ['border-radius', 'radius', 'border'], a: ['border-radius'] },
+    { t: 'play', lead: 'الوسم `<div>` صندوق فارغ نضع فيه ما نشاء، و `width` تحدّد **عرضه**.', lang: 'html', start: '<style>\n  div { width: 200px; background-color: gold; padding: 10px; }\n</style>\n<div>I am 200px wide</div>' },
+    { t: 'mcq', q: 'أيّ خاصية تحدّد **عرض** الصندوق؟', options: ['`width`', '`padding`', '`color`'], a: 0 },
+    { t: 'fill', q: 'صندوق عرضه **300 بكسل**:', lang: 'css', src: 'div { width: {{0}}; }', tokens: ['300px', '300', 'px'], a: ['300px'] },
+    { t: 'mcq', multi: true, code: { lang: 'css', src: 'button {\n  padding: 10px;\n  border-radius: 8px;\n}' }, q: 'ماذا يحدث للزر؟', options: ['يصبح فيه مسافة داخلية', 'تصبح زواياه دائرية', 'يصبح لونه أحمر'], a: [0, 1] },
+    { t: 'code', q: 'اجعل الزر `button`:\n1) خلفيته `orange`\n2) مسافته الداخلية `15px`\n3) زواياه دائرية `10px`', lang: 'html', start: '<style>\n  button {  }\n</style>\n<button>Play</button>', checks: [{ sel: 'button', prop: 'background-color', eq: 'rgb(255, 165, 0)', msg: 'أضف background-color: orange;' }, { sel: 'button', prop: 'padding-top', eq: '15px', msg: 'أضف padding: 15px;' }, { sel: 'button', prop: 'border-top-left-radius', eq: '10px', msg: 'أضف border-radius: 10px;' }], hint: '`background-color: orange; padding: 15px; border-radius: 10px;`', solution: '<style>\n  button { background-color: orange; padding: 15px; border-radius: 10px; }\n</style>\n<button>Play</button>' },
+    { t: 'type', q: 'اكتب خاصية **المسافة الداخلية**:', lang: 'css', src: 'p { {{0}}: 10px; }', a: ['padding'] },
+    { t: 'recap', points: ['كل عنصر هو **صندوق Box**', '`padding` مسافة داخلية و `border-radius` زوايا دائرية', '`<div>` صندوق فارغ و `width` تحدّد عرضه'], next: 'الفئات class' },
+  ]},
+  /* ---------------------------------------------------------------- */
+  { type: 'lesson', title: 'الفئات', en: 'Classes', cards: [
+    { t: 'mcq', lead: '🔁 مراجعة سريعة', q: 'أيّ خاصية تجعل الزوايا دائرية؟', options: ['`border-radius`', '`padding`', '`width`'], a: 0 },
+    { t: 'play', lead: 'إذا أردنا تلوين **بعض** الفقرات فقط، نعطيها **فئة** (**class**). وفي CSS نكتب **نقطة** `.` قبل اسم الفئة.', lang: 'html', start: '<style>\n  .star { color: orange; }\n</style>\n<p>Normal</p>\n<p class="star">Star!</p>\n<p>Normal</p>' },
+    { t: 'fill', q: 'أعطِ الفقرة الفئة `star`:', lang: 'html', src: '<p {{0}}="star">Hi</p>', tokens: ['class', 'href'], a: ['class'] },
+    { t: 'fill', lead: 'في CSS يبدأ اسم الفئة بـ **نقطة** `.`', q: 'أكمل:', lang: 'css', src: '{{0}}star { color: gold; }', tokens: ['.', '#', ':'], a: ['.'] },
+    { t: 'mcq', code: { lang: 'html', src: '<style> .red { color: red; } </style>\n<p>A</p>\n<p class="red">B</p>' }, q: 'أيّ فقرة ستكون **حمراء**؟', options: ['A', 'B', 'الاثنتان'], a: 1 },
+    { t: 'fill', q: 'اجعل الفئة `big` بحجم 40px:', lang: 'css', src: '.{{0}} { font-size: 40px; }', tokens: ['big', '.big', 'class'], a: ['big'] },
+    { t: 'play', lead: 'نستطيع استخدام **نفس الفئة** لأكثر من عنصر!', lang: 'html', start: '<style>\n  .winner { color: green; font-size: 28px; }\n</style>\n<p class="winner">Ali 🥇</p>\n<p>Sara</p>\n<p class="winner">Hassan 🥇</p>' },
+    { t: 'mcq', multi: true, code: { lang: 'html', src: '<style> .blue { color: blue; } </style>\n<h1 class="blue">Title</h1>\n<p>Text</p>\n<p class="blue">More</p>' }, q: 'أيّ النصوص ستكون **زرقاء**؟', options: ['Title', 'Text', 'More'], a: [0, 2] },
+    { t: 'fill', q: 'أعطِ الزر الفئة `cool`:', lang: 'html', src: '<button {{0}}="{{1}}">Go</button>', tokens: ['class', 'cool', '.cool'], a: ['class', 'cool'] },
+    { t: 'mcq', q: 'في HTML نكتب `class="cool"`، وفي CSS نكتب:', options: ['`.cool`', '`cool`', '`#cool`'], a: 0 },
+    { t: 'code', q: 'أنشئ فئة اسمها `hero` لونها `red`، واستخدمها في العنوان `h1`.', lang: 'html', start: '<style>\n  \n</style>\n<h1>Super Hero</h1>', checks: [{ sel: 'h1.hero', msg: 'أضف class="hero" إلى وسم <h1>' }, { sel: 'h1', prop: 'color', eq: 'rgb(255, 0, 0)', msg: 'في <style> اكتب .hero { color: red; }' }], hint: 'في `<style>`: `.hero { color: red; }` وفي العنوان: `<h1 class="hero">`', solution: '<style>\n  .hero { color: red; }\n</style>\n<h1 class="hero">Super Hero</h1>' },
+    { t: 'type', q: 'اكتب الرمز الذي يبدأ به اسم الفئة في CSS:', lang: 'css', src: '{{0}}hero { color: red; }', a: ['.'] },
+    { t: 'recap', points: ['**class** تجعلنا نختار عناصر معيّنة لتنسيقها', 'في HTML: `class="name"` — وفي CSS: `.name { }`', 'نفس الفئة يمكن أن تُستخدم لعدة عناصر'], next: 'تمرين: أزرار اللعبة 🎮' },
+  ]},
+  /* ---------------------------------------------------------------- */
+  { type: 'practice', title: 'أزرار اللعبة', en: 'Game Buttons', cards: [
+    { t: 'code', img: '🎮', story: 'لعبتك تحتاج زرّين: زر **تشغيل** أخضر وزر **إيقاف** أحمر.', q: '1) اجعل خلفية الفئة `.play` لونها `green`\n2) اجعل خلفية الفئة `.stop` لونها `red`', lang: 'html', start: '<style>\n  .play {  }\n  .stop {  }\n</style>\n<button class="play">Play</button>\n<button class="stop">Stop</button>', checks: [{ sel: 'button.play', prop: 'background-color', eq: 'rgb(0, 128, 0)', msg: 'خلفية .play يجب أن تكون green' }, { sel: 'button.stop', prop: 'background-color', eq: 'rgb(255, 0, 0)', msg: 'خلفية .stop يجب أن تكون red' }], hint: '`.play { background-color: green; }`', solution: '<style>\n  .play { background-color: green; }\n  .stop { background-color: red; }\n</style>\n<button class="play">Play</button>\n<button class="stop">Stop</button>' },
+    { t: 'code', bug: true, img: '🐞', story: 'الفقرة يجب أن تكون **ذهبية** لكنها لم تتلوّن! نسي المبرمج رمزاً في CSS.', q: 'أصلح الخطأ لتصبح الفقرة ذهبية `gold`.', lang: 'html', start: '<style>\n  star { color: gold; }\n</style>\n<p class="star">Shine</p>', checks: [{ sel: 'p.star', prop: 'color', eq: 'rgb(255, 215, 0)', msg: 'الفقرة ما زالت غير ذهبية. كيف نكتب اسم الفئة في CSS؟' }], hint: 'اسم الفئة في CSS يبدأ بنقطة: `.star`', solution: '<style>\n  .star { color: gold; }\n</style>\n<p class="star">Shine</p>' },
+  ]},
+  /* ---------------------------------------------------------------- */
+  { type: 'quiz', title: 'اختبار مرحلة CSS', en: 'CSS Test', cards: [
+    { t: 'mcq', q: 'اللغة التي نلوّن بها صفحات الويب ونجمّلها:', options: ['CSS', 'HTML', 'Python'], a: 0 },
+    { t: 'mcq', q: 'نكتب CSS داخل الوسم:', options: ['`<style>`', '`<css>`', '`<p>`'], a: 0 },
+    { t: 'fill', q: 'أكمل الرموز:', lang: 'css', src: 'h1 {{0}} color{{1}} red; }', tokens: ['{', ':', '('], a: ['{', ':'] },
+    { t: 'mcq', q: '`background-color` تغيّر:', options: ['لون النص', 'لون الخلفية', 'حجم الخط'], a: 1 },
+    { t: 'fill', q: 'اجعل النص في المنتصف:', lang: 'css', src: 'h1 { {{0}}: {{1}}; }', tokens: ['text-align', 'center', 'color'], a: ['text-align', 'center'] },
+    { t: 'mcq', q: 'أيّ خط **أكبر**؟', options: ['`font-size: 12px;`', '`font-size: 36px;`'], a: 1 },
+    { t: 'mcq', q: '`padding` هي:', options: ['المسافة الداخلية', 'الزوايا الدائرية', 'العرض'], a: 0 },
+    { t: 'mcq', code: { lang: 'html', src: '<style> .note { color: green; } </style>\n<p>One</p>\n<p class="note">Two</p>' }, q: 'أيّ فقرة ستكون خضراء؟', options: ['One', 'Two'], a: 1 },
+    { t: 'order', q: 'رتّب قاعدة CSS:', lang: 'css', lines: ['.box {', '  border-radius: 10px;', '}'] },
+    { t: 'type', q: 'اكتب خاصية **لون النص**:', lang: 'css', src: 'p { {{0}}: blue; }', a: ['color'] },
+  ]},
+]});
