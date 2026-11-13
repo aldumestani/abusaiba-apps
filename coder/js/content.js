@@ -15,5 +15,5 @@ window.BADGES = [
   { id: 13, icon: '🎨', title: 'مصمّم الويب', en: 'Web Designer', desc: 'أنهيت مرحلة CSS' },
   { id: 10, icon: '⚡', title: 'نجم JavaScript', en: 'JS Star', desc: 'أنهيت مرحلة JavaScript' },
   { id: 11, icon: '🐍', title: 'بطل Python', en: 'Python Hero', desc: 'أنهيت مرحلة Python' },
-  { id: 12, icon: '👑', title: 'المبرمج المحترف', en: 'Pro Coder', desc: 'أنهيت جميع المراحل' },
+  { id: 12, icon: '👑', title: 'نجم البرمجة', en: 'Coding Star', desc: 'أنهيت جميع المراحل' },
 ];
