@@ -220,13 +220,15 @@
           <div style="margin-top:14px"><button class="btn big" id="nGo">ابدأ المغامرة 🚀</button></div>
         </div>
         <div class="credit-line">${esc(SET().school)}</div>
+        <button class="btn ghost sm" id="impBtn" style="margin-top:6px">📥 عندي كود من جهاز آخر</button>
         <div class="dev-credit">فكرة وتطوير: أستاذ جهاد الدمستاني
-          <a href="#" id="igLink" class="ig"><span class="ltr">@jehadmstani</span></a></div>
+          <a href="#" id="igLink" class="ig" dir="ltr"><img src="instagram.png" alt=""><span class="ltr">@jehadmstani</span></a></div>
       </div>`;
     $$('.stu').forEach(e => e.onclick = () => { play('tap'); enter(DB.students[e.dataset.id]); });
     $('#nGo').onclick = createStudent;
     $('#n3').onkeydown = e => { if (e.key === 'Enter') createStudent(); };
     $('#tBtn').onclick = teacherLogin;
+    $('#impBtn').onclick = askTransfer;
     $('#igLink').onclick = e => { e.preventDefault(); const u = 'https://www.instagram.com/jehadmstani/'; NATIVE ? NATIVE.openURL(u) : window.open(u); };
     show('login');
   }
@@ -246,7 +248,7 @@
     if (dup) { if (await confirmBox(`يوجد طالب بنفس الاسم والصف: <b>${esc(dup.name)}</b>. هل هذا أنت؟`, 'نعم، أنا', 'لا')) return enter(dup); return; }
     const id = 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
     DB.students[id] = { id, name, grade, section, created: new Date().toISOString(), xp: 0, done: {}, codes: [], badges: {}, heard: {} };
-    save(); enter(DB.students[id], true);
+    save(); track('register', 'تسجيل طالب جديد'); enter(DB.students[id], true);
   }
   function enter(s, isNew) {
     ME = s; s.last = new Date().toISOString(); save(); syncMusic(); renderHome();
@@ -275,6 +277,7 @@
         <span class="pill" title="نقاط الخبرة XP">⭐ ${s.xp} XP</span>
         <span class="pill" title="الأوسمة">🏅 ${nb}</span>
         <button class="btn ghost sm" id="achBtn">🎖️ إنجازاتي وشهاداتي</button>
+        <button class="btn ghost sm" id="moveBtn">📲 جهاز آخر</button>
         <button class="btn ghost sm" id="dicBtn">📖 قاموسي 🔊</button>
         <button class="iconbtn" id="musBtn" title="الموسيقى">${DB.settings.music ? '🎵' : '🔕'}</button>
         <button class="iconbtn" id="sndBtn" title="المؤثرات الصوتية">${DB.settings.sound ? '🔊' : '🔇'}</button>
@@ -311,6 +314,7 @@
     });
     $$('[data-cert]').forEach(b => b.onclick = () => showCert(s, +b.dataset.cert === 7 ? FINAL : STAGES.find(x => x.id === +b.dataset.cert)));
     $('#achBtn').onclick = showAchievements;
+    $('#moveBtn').onclick = showTransfer;
     if (!nameLocked(s)) $('#nameBtn').onclick = () => editMyName(false, () => renderHome(false));
     $('#dicBtn').onclick = showDictionary;
     $('#outBtn').onclick = renderLogin;
@@ -470,6 +474,72 @@
   }
 
   // تعديل/تأكيد الاسم مع معاينة الشهادة. confirm=true: عند إنهاء أول درس (بعده يُقفل الاسم)
+  // ---- نقل التقدّم إلى جهاز آخر: كود من 16 رقماً، موقّع ومرتبط باسم الطالب وصفّه (بلا خادم ولا حسابات) ----
+  // التقدّم متسلسل، فيكفي عدد الدروس المنجزة + النقاط + أوسمة لا تُستنتج + نسخة + توقيع 30 بت = 53 بت < 16 رقماً
+  const SITE_URL = 'https://abusaiba-apps.com/guardians/';
+  const FLAG_BADGES = [2, 5, 14];
+  const P30 = 1073741824n;
+  const sig30 = (w, n, xp, f) => { let h = 0; for (const ch of Codes.seal(['T', n, xp, f, Codes.normName(w.name), w.grade, w.section])) h = (h * 31 + ch.charCodeAt(0)) % 1073741824; return h; };
+  function transferCode(s) {
+    let n = 0; while (n < FLAT.length && isDone(s, FLAT[n])) n++;
+    const xp = Math.min(s.xp, 4095), f = FLAG_BADGES.reduce((a, id, i) => a | (s.badges[id] ? 1 << i : 0), 0);
+    const v = (((BigInt(n) * 4096n + BigInt(xp)) * 8n + BigInt(f)) * 4n + 1n) * P30 + BigInt(sig30(s, n, xp, f));
+    return String(v).padStart(16, '0').replace(/(\d{4})(?=\d)/g, '$1-');
+  }
+  function readCode(code, w) {
+    const d = String(code).replace(/[٠-٩]/g, x => '٠١٢٣٤٥٦٧٨٩'.indexOf(x)).replace(/\D/g, '');
+    if (d.length !== 16) return null;
+    let v = BigInt(d); const sig = Number(v % P30); v /= P30;
+    const ver = Number(v % 4n); v /= 4n; const f = Number(v % 8n); v /= 8n; const xp = Number(v % 4096n), n = Number(v / 4096n);
+    return ver === 1 && n <= FLAT.length && sig === sig30(w, n, xp, f) ? { n, xp, f } : null;
+  }
+  const stageCertTitle = st => st.certName;
+  function applyCode(t, r) {
+    const today = new Date().toISOString();
+    FLAT.slice(0, r.n).forEach(it => {
+      if (isDone(t, it)) return;
+      t.done[it.key] = { date: today, perfect: false, mistakes: 0 };
+      if (it.type === 'boss') addCode(t, 'C', String(it.stage.id), stageCertTitle(it.stage)); else addCode(t, 'D', it.ref, it.title);
+    });
+    t.xp = Math.max(t.xp, r.xp);
+    FLAG_BADGES.forEach((id, i) => { if (r.f & (1 << i) && !t.badges[id]) { t.badges[id] = today; addCode(t, 'B', String(id).padStart(2, '0'), 'وسام: ' + BADGES.find(b => b.id === id).title); } });
+    if (allDone(t) && !t.codes.some(c => c.kind === 'C' && c.ref === '7')) addCode(t, 'C', '7', FINAL.certName);
+    checkBadges(t);
+  }
+  function showTransfer() {
+    const code = transferCode(ME), url = SITE_URL + '#c=' + code.replace(/-/g, '');
+    const qr = qrcode(0, 'M'); qr.addData(url); qr.make();
+    const m = modal(`<div class="big-emoji">📲</div><h2 style="margin:4px 0">أكمل من جهاز آخر</h2>
+      <p style="margin:4px 0">على الجهاز الآخر اضغط <b>«📥 عندي كود من جهاز آخر»</b>، واكتب اسمك وصفّك كما هنا، ثم هذا الكود:</p>
+      <div class="xfer-code ltr">${code}</div>
+      <p class="muted" style="margin:6px 0">أو امسح الرمز بكاميرا الهاتف أو الآيباد:</p>
+      <div class="qr-box">${qr.createSvgTag({ cellSize: 4, margin: 3, scalable: true, alt: 'رمز نقل التقدّم' })}</div>
+      <p class="muted" style="font-size:15px;margin:6px 0">الكود يعمل مع اسمك وصفّك فقط، ويتغيّر كلما تقدّمت.</p>
+      <div class="row"><button class="btn" data-copy>📋 نسخ الكود</button><button class="btn ghost" data-x>إغلاق</button></div>`);
+    $('[data-x]', m.el).onclick = m.close;
+    $('[data-copy]', m.el).onclick = async e => { try { await navigator.clipboard.writeText(code); e.target.textContent = '✅ تم النسخ'; } catch (er) { prompt('انسخ الكود:', code); } };
+  }
+  function askTransfer(code = '') {
+    const grades = [1, 2, 3, 4, 5, 6].map(g => `<option value="${g}" ${g === 5 ? 'selected' : ''}>الصف ${g}</option>`).join('');
+    const secs = Array.from({ length: 10 }, (_, i) => `<option value="${i + 1}">شعبة ${i + 1}</option>`).join('');
+    const m = modal(`<div class="big-emoji">📥</div><h2 style="margin:4px 0">عندي كود من جهاز آخر</h2>
+      <p style="margin:4px 0">اكتب اسمك وصفّك <b>كما سجّلتهما أول مرة</b>، ثم الكود:</p>
+      <div class="row name-row">${nameFields('x')}<select class="field" id="xG">${grades}</select><select class="field" id="xS">${secs}</select></div>
+      <input class="field ltr xfer-in" id="xC" inputmode="numeric" autocomplete="off" placeholder="0000-0000-0000-0000" value="${esc(code)}">
+      <div class="row" style="margin-top:10px"><button class="btn" data-go>نقل تقدّمي</button><button class="btn ghost" data-x>إلغاء</button></div>`);
+    $('[data-x]', m.el).onclick = m.close;
+    $('[data-go]', m.el).onclick = async () => {
+      const parts = readName('x', m.el), err = nameError(parts); if (err) return toast(err);
+      const w = { name: parts.join(' '), grade: +$('#xG', m.el).value, section: +$('#xS', m.el).value };
+      const r = readCode($('#xC', m.el).value, w);
+      if (!r) return toast('❌ الكود لا يطابق الاسم والصف.<br><small>اكتب اسمك الثلاثي وصفّك وشعبتك تماماً كما سجّلتها أول مرة، وتأكد من أرقام الكود.</small>');
+      const same = Object.values(DB.students).find(x => sameName(x, w));
+      if (!await confirmBox(`📲 <b>${esc(w.name)}</b> — ${classLabel(w)}<br>${r.n} درساً منجزاً · ⭐ ${r.xp} XP<br><small>${same ? 'سيُضاف إلى تقدّمك على هذا الجهاز.' : 'سيُحفظ على هذا الجهاز.'}</small>`, 'نعم، انقله', 'إلغاء')) return;
+      let t = same;
+      if (!t) { const id = 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); t = DB.students[id] = { id, name: w.name, grade: w.grade, section: w.section, created: new Date().toISOString(), xp: 0, done: {}, codes: [], badges: {}, heard: {} }; }
+      applyCode(t, r); m.close(); save(); track('transfer', 'نقل تقدّم من جهاز آخر'); enter(t);
+    };
+  }
   function editMyName(confirm, done) {
     const s = ME, sample = () => ({ name: readName('e', m.el).join(' '), grade: s.grade, section: s.section });
     const m = modal(`<h2 style="margin:0 0 6px">${confirm ? '✋ قبل أن نحفظ إنجازك: تأكّد من اسمك' : '✏️ تعديل اسمي'}</h2>
@@ -505,6 +575,8 @@
       if (it.type === 'boss') cert = addCode(s, 'C', String(it.stage.id), it.stage.certName);
       else addCode(s, 'D', it.ref, it.title);
       if (allDone(s)) finalCert = addCode(s, 'C', '7', FINAL.certName);
+      if (cert) track('cert-' + it.stage.id, 'شهادة المرحلة ' + it.stage.id);
+      if (finalCert) track('course-complete', 'إتمام المنهج');
     } else {
       cert = it.type === 'boss' ? s.codes.find(c => c.kind === 'C' && c.ref === String(it.stage.id)) : null;
       if (perfect && !s.done[it.key].perfect) s.done[it.key].perfect = true;
@@ -520,11 +592,13 @@
       <div class="stats">${gained ? `<span class="pill">⭐ +${gained} XP</span>` : ''}${perfect ? '<span class="pill">🎯 بدون أخطاء</span>' : `<span class="pill">🔁 ${P.mistakes} أخطاء تعلّمت منها</span>`}</div>
       ${cert ? `<div class="code-box gold"><div class="cd">📜 مبروك! حصلت على ${esc(it.stage.certName)}</div></div>` : ''}
       ${finalCert ? `<div class="code-box gold"><div class="cd">🏆 و${esc(FINAL.certName)}!</div></div>` : ''}
+      ${cert && first && SET().formsLink ? `<div class="send-box"><b>📨 أرسل إنجازك لمعلمك</b> ليُسجَّل في سجل المدرسة.<br><button class="btn forms" data-f>📨 أرسل الآن</button></div>` : ''}
       ${badges.map(b => `<div class="code-box badge"><div class="cd">🏅 وسام جديد: ${b.badge.icon} ${b.badge.title}</div><div class="lbl">${b.badge.desc}</div></div>`).join('')}
       <div class="row" style="margin-top:8px">${cert ? '<button class="btn ok" data-c>📜 عرض شهادتي</button>' : ''}<button class="btn" data-h>متابعة ←</button></div>`);
     if (badges.length) setTimeout(() => play('badge'), 900);
     $('[data-h]', m.el).onclick = () => { m.close(); renderHome(); };
     if (cert) $('[data-c]', m.el).onclick = () => { m.close(); renderHome(); showCert(s, it.stage); };
+    if ($('[data-f]', m.el)) $('[data-f]', m.el).onclick = e => { sendToTeacher(s, finalCert ? FINAL : it.stage); e.target.textContent = '✅ فُتح النموذج، اضغط «إرسال» فيه'; };
   }
 
   // ====================== أنواع البطاقات ======================
@@ -856,10 +930,19 @@
   function formsURL(link, vals) {
     try {
       const u = new URL(link.trim());
-      if (!/^(forms\.office\.com|forms\.microsoft\.com)$/.test(u.hostname)) return '';
+      if (u.protocol !== 'https:' || !/^(forms\.office\.com|forms\.microsoft\.com|forms\.cloud\.microsoft)$/.test(u.hostname)) return '';
       for (const [k, v] of [...u.searchParams]) if (vals[v.trim().toUpperCase()] !== undefined) u.searchParams.set(k, vals[v.trim().toUpperCase()]);
       return u.toString().replace(/\+/g, '%20'); // مسافة = %20 (إشارة + الحقيقية تُرمَّز %2B)
     } catch (e) { return ''; }
+  }
+  // عدّاد زيارات مجهول (GoatCounter في نسخة الموقع فقط): أحداث بلا أسماء ولا بيانات شخصية
+  const track = (path, title) => { try { if (window.goatcounter && window.goatcounter.count) window.goatcounter.count({ path, title, event: true }); } catch (e) {} };
+  // يفتح نموذج Forms معبّأً بإنجاز الطالب: الشهادة وكودها وعدد الدروس والنقاط
+  function sendToTeacher(s, st) {
+    const c = s.codes.find(x => x.kind === 'C' && x.ref === String(st.id));
+    const u = c && formsURL(SET().formsLink, { NAME: s.name, CLASS: classLabel(s), STAGE: certTitle(st), CODE: c.code, APP: APP_NAME, LESSONS: String(Object.keys(s.done).length), XP: String(s.xp) });
+    if (!u) return toast('❌ رابط النموذج غير صحيح، أخبر معلّمك.');
+    NATIVE ? NATIVE.openURL(u) : window.open(u, '_blank');
   }
   function showCert(s, st) {
     const c = s.codes.find(x => x.kind === 'C' && x.ref === String(st.id)); if (!c) return;
@@ -877,11 +960,7 @@
       const f = await NATIVE.savePDF(`${st.certName} - ${s.name}`);
       if (f) toast('✅ تم حفظ الشهادة:<br><span class="ltr" style="font-size:14px">' + esc(f) + '</span>');
     };
-    if (S.formsLink) $('#cForms').onclick = () => {
-      const u = formsURL(S.formsLink, { NAME: s.name, CLASS: classLabel(s), STAGE: certTitle(st), CODE: c.code, APP: APP_NAME });
-      if (!u) return toast('❌ رابط النموذج غير صحيح، أخبر معلّمك.');
-      NATIVE ? NATIVE.openURL(u) : window.open(u, '_blank');
-    };
+    if (S.formsLink) $('#cForms').onclick = () => sendToTeacher(s, st);
     if (S.teacherEmail) $('#cTeams').onclick = async () => {
       const msg = `السلام عليكم ${S.teacher}،\nأرسل لك شهادتي في تطبيق «${APP_NAME}»:\n${st.certName}\nالاسم: ${s.name} — ${classLabel(s)}\nرمز التحقق: ${c.code}`;
       const f = NATIVE ? await NATIVE.shareTeams(`${st.certName} - ${s.name}`, S.teacherEmail, msg) : (window.open('https://teams.microsoft.com/l/chat/0/0?users=' + encodeURIComponent(S.teacherEmail) + '&message=' + encodeURIComponent(msg)), '');
@@ -988,10 +1067,26 @@
   TAB.students = el => {
     const list = Object.values(DB.students).sort((a, b) => a.grade - b.grade || a.section - b.section || a.name.localeCompare(b.name, 'ar'));
     const total = FLAT.length;
-    el.innerHTML = list.length ? `<p class="muted">عدد الطلبة على هذا الجهاز: ${list.length}</p><div style="max-height:56vh;overflow:auto"><table class="codes-table">
+    const classes = [...new Set(list.map(s => s.grade + '/' + s.section))];
+    el.innerHTML = list.length ? `<p class="muted">عدد الطلبة على هذا الجهاز: ${list.length}</p>
+      <div class="row" style="justify-content:flex-start;margin-bottom:10px"><b>🖨️ بطاقات النقل</b> (كود وQR لكل طالب ليكمل في البيت):
+        <select class="field" id="cdC">${classes.map(c => `<option>${c}</option>`).join('')}</select><button class="btn sm" id="cardsBtn">عرض البطاقات</button></div><div style="max-height:56vh;overflow:auto"><table class="codes-table">
       <tr><th>الاسم</th><th>الصف</th><th>XP</th><th>التقدّم</th><th>الأوسمة</th><th>الشهادات</th><th></th></tr>
       ${list.map(s => { const d = FLAT.filter(it => isDone(s, it)).length; return `<tr><td><b style="color:var(--ink)">${esc(s.name)}</b></td><td>${s.grade}/${s.section}</td><td>${s.xp}</td><td>${d}/${total} (${Math.round(d / total * 100)}%)</td><td>${Object.keys(s.badges).length}</td><td>${s.codes.filter(c => c.kind === 'C').map(c => c.ref === '7' ? '🏆' : 'م' + c.ref).join('، ') || '—'}</td>
         <td><button class="btn ghost sm" data-v="${s.id}">الشهادات</button> <button class="btn ghost sm" data-n="${s.id}">✏️ الاسم</button> <button class="btn bad sm" data-d="${s.id}">حذف</button></td></tr>`; }).join('')}</table></div>` : '<p class="muted">لا يوجد طلبة بعد.</p>';
+    if ($('#cardsBtn', el)) $('#cardsBtn', el).onclick = () => {
+      const kids = list.filter(s => s.grade + '/' + s.section === $('#cdC', el).value);
+      const card = s => { const code = transferCode(s), qr = qrcode(0, 'M'); qr.addData(SITE_URL + '#c=' + code.replace(/-/g, '')); qr.make();
+        return `<div class="xcard"><div class="xc-app">${APP_NAME}</div><div class="xc-name">${esc(s.name)}</div><div class="xc-cls">${classLabel(s)}</div>
+          <div class="xc-qr">${qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true, alt: 'رمز نقل التقدّم' })}</div><div class="xc-code ltr">${code}</div>
+          <div class="xc-how">امسح الرمز بالكاميرا، أو افتح<br><b class="ltr" style="white-space:nowrap">${SITE_URL.replace('https://', '')}</b><br>واضغط «📥 عندي كود من جهاز آخر»</div></div>`; };
+      const pages = []; for (let i = 0; i < kids.length; i += 8) pages.push(`<div class="xpage">${kids.slice(i, i + 8).map(card).join('')}</div>`);
+      const v = $('#certView');
+      v.innerHTML = `<div class="modal cards-sheet"><div class="cert-actions" style="margin:0 0 10px"><button class="btn ok" id="kPrint">🖨️ طباعة (${kids.length} بطاقة)</button><button class="btn ghost" id="kClose">إغلاق</button></div>${pages.join('')}</div>`;
+      v.classList.remove('hidden');
+      $('#kClose').onclick = () => v.classList.add('hidden');
+      $('#kPrint').onclick = () => NATIVE ? NATIVE.print() : window.print();
+    };
     $$('[data-n]', el).forEach(b => b.onclick = () => {
       const s = DB.students[b.dataset.n];
       const m = modal(`<h3>✏️ تصحيح اسم الطالب — ${classLabel(s)}</h3><div class="row name-row">${nameFields('t', s.name)}</div>
@@ -1101,7 +1196,7 @@
       const mail = $('#sMail').value.trim();
       if (mail && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mail)) return toast('❌ البريد الإلكتروني غير صحيح');
       const forms = $('#sForms').value.trim();
-      if (forms && !formsURL(forms, {})) return toast('❌ رابط Forms غير صحيح. يجب أن يبدأ بـ <span class="ltr">https://forms.office.com</span>');
+      if (forms && !formsURL(forms, {})) return toast('❌ رابط Forms غير صحيح. يجب أن يكون رابط Microsoft Forms المعبّأ مسبقاً');
       Object.assign(CUSTOM.settings, { school: $('#sSchool').value.trim() || S.school, principal: $('#sPrin').value.trim(), teacher: $('#sTeacher').value.trim(), teacherTitle: $('#sTitle').value.trim(), teacherEmail: mail, formsLink: forms });
       saveCustom(); toast('✅ تم الحفظ');
     };
@@ -1204,5 +1299,8 @@
     }
   });
   window.__dbg = { get P() { return P; }, get ME() { return ME; }, result: (ok) => result(ok) };
-  loadDB().then(loadCustom).then(renderLogin);
+  // رابط رمز QR: ‎#c=الكود‎ يفتح نافذة النقل والكود مكتوب فيها
+  const codeFromHash = () => { const m = location.hash.match(/#c=(\d{16})/); if (!m) return; history.replaceState(null, '', location.pathname + location.search); askTransfer(m[1].replace(/(\d{4})(?=\d)/g, '$1-')); };
+  loadDB().then(loadCustom).then(renderLogin).then(codeFromHash);
+  addEventListener('hashchange', codeFromHash);
 })();
