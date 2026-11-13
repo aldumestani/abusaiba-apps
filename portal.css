@@ -30,4 +30,4 @@ body { margin: 0; font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif; color: v
 .help .note { color: #8a4b00; background: #fff6dc; border-radius: 12px; padding: 10px 14px; margin: 0; font-weight: 700; }
 footer { text-align: center; padding: 18px 0 32px; color: var(--muted); }
 footer p { margin: 0 0 6px; font-weight: 700; color: var(--ink); }
-.ig { display: inline-flex; min-height: 44px; align-items: center; padding: 4px 16px; border: 2px solid var(--line); border-radius: 999px; background: #fff; color: var(--ink); font-weight: 700; text-decoration: none; }
+.ig { display: inline-flex; min-height: 44px; align-items: center; gap: 8px; padding: 4px 16px; border: 2px solid var(--line); border-radius: 999px; background: #fff; color: var(--ink); font-weight: 700; text-decoration: none; }
