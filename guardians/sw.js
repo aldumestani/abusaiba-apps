@@ -1,5 +1,5 @@
 /* يعمل التطبيق دون إنترنت بعد أول فتح. custom.json (تعديلات المعلم) يُجلب من الشبكة أولاً ليصل أي تحديث. */
-const CACHE = 'guardians-11146f40c65b';
+const CACHE = 'guardians-3c0aaf1f03bc';
 const FILES = ["./", "fonts/cairo-arabic-400-normal.woff2", "fonts/cairo-arabic-700-normal.woff2", "fonts/cairo-arabic-900-normal.woff2", "fonts/cairo-latin-400-normal.woff2", "fonts/cairo-latin-700-normal.woff2", "icon-192.png", "icon-512.png", "icon.png", "index.html", "instagram.png", "js/app.js", "js/art.js", "js/codes.js", "js/content-1.js", "js/content-2.js", "js/content-3.js", "js/content-4.js", "js/content-5.js", "js/content-6.js", "js/content.js", "js/qrcode.js", "js/sw-register.js", "letterhead.png", "manifest.webmanifest", "sounds/badge.mp3", "sounds/correct.mp3", "sounds/defeat.mp3", "sounds/hit.mp3", "sounds/music.mp3", "sounds/pop.mp3", "sounds/tap.mp3", "sounds/tick.mp3", "sounds/whoosh.mp3", "sounds/win.mp3", "sounds/wrong.mp3", "style.css"];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => {
