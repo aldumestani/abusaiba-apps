@@ -166,7 +166,9 @@
   const FINAL = { id: 7, icon: '🏆', color: '#e6a100', title: 'الحارس الرقمي المحترف', en: 'Pro Digital Guardian', certName: 'شهادة الحارس الرقمي المحترف', final: true };
   const XP = { lesson: 10, mission: 15, boss: 25 };
   const isDone = (s, it) => !!s.done[it.key];
-  function isUnlocked(s, it) { const i = FLAT.indexOf(it); return i === 0 || isDone(s, FLAT[i - 1]); }
+  // وضع الفعالية: قسم واحد مفتوح (CUSTOM.settings.focusStage)، وطالب الديمو «المفتوح» يتنقّل بحرية
+  const focusId = () => String(SET().focusStage || '');
+  function isUnlocked(s, it) { const i = FLAT.indexOf(it); return i === 0 || s.demo === 'open' || isDone(s, FLAT[i - 1]) || (focusId() === String(it.stage.id) && it === it.stage.items[0]); }
   const stageDone = (s, st) => st.items.every(it => isDone(s, it));
   const allDone = s => STAGES.every(st => stageDone(s, st));
   const itemTitle = ref => { const it = FLAT.find(x => x.ref === ref); return it ? `${it.stage.title} ← ${it.title}` : '؟'; };
@@ -198,11 +200,11 @@
   // ====================== شاشة الدخول ======================
   function renderLogin() {
     ME = null; syncMusic();
-    const list = Object.values(DB.students).sort((a, b) => (b.last || '').localeCompare(a.last || ''));
+    if (SET().closed) { $('#login').innerHTML = `<div class="login-box"><div class="big-emoji">⏸️</div><h1 class="app-title">${APP_NAME}</h1><p style="font-size:22px">${esc(SET().closedMsg || 'التطبيق متوقف مؤقتاً. نراكم قريباً! 👋')}</p></div>`; return show('login'); }
+    const list = Object.values(DB.students).filter(s => !s.demo).sort((a, b) => (b.last || '').localeCompare(a.last || ''));
     const grades = [1, 2, 3, 4, 5, 6].map(g => `<option value="${g}" ${g === 5 ? 'selected' : ''}>الصف ${g}</option>`).join('');
     const secs = Array.from({ length: 10 }, (_, i) => `<option value="${i + 1}">شعبة ${i + 1}</option>`).join('');
     $('#login').innerHTML = `
-      <button class="btn ghost sm teacher-link" id="tBtn">🔒 لوحة المعلم</button>
       <div class="login-box">
         <div class="hero">${ART.appCover()}
           <div class="hero-title"><h1>حُرّاس أبوصيبع الرقميّون</h1><p class="ltr">Abusaiba Digital Guardians</p></div></div>
@@ -227,7 +229,6 @@
     $$('.stu').forEach(e => e.onclick = () => { play('tap'); enter(DB.students[e.dataset.id]); });
     $('#nGo').onclick = createStudent;
     $('#n3').onkeydown = e => { if (e.key === 'Enter') createStudent(); };
-    $('#tBtn').onclick = teacherLogin;
     $('#impBtn').onclick = askTransfer;
     $('#igLink').onclick = e => { e.preventDefault(); const u = 'https://www.instagram.com/jehadmstani/'; NATIVE ? NATIVE.openURL(u) : window.open(u); };
     show('login');
@@ -284,9 +285,10 @@
         <button class="iconbtn" id="outBtn" title="خروج">🚪</button>
       </div>
       <div class="home-wrap">${allDone(s) ? `<div class="final-banner">${face('guide')}<div><b>🏆 أنت الآن حارس رقمي محترف!</b><br>هزمت كل الأشرار الرقميين.</div><button class="btn ok" data-cert="7">📜 الشهادة الكبرى</button></div>` : ''}
-      ${STAGES.map((st, si) => {
+      ${focusId() ? `<div class="focus-banner">🎯 فعالية اليوم: ${esc((STAGES.find(x => String(x.id) === focusId()) || {}).title || '')}</div>` : ''}${STAGES.map((st, si) => {
+        if (focusId() && focusId() !== String(st.id)) return '';
         const done = st.items.filter(it => isDone(s, it)).length;
-        const locked = si > 0 && !stageDone(s, STAGES[si - 1]);
+        const locked = si > 0 && s.demo !== 'open' && !focusId() && !stageDone(s, STAGES[si - 1]);
         const won = stageDone(s, st);
         const cert = s.codes.find(c => c.kind === 'C' && c.ref === String(st.id));
         return `<section class="stage ${locked ? 'locked' : ''}" style="--sc:${st.color}">
@@ -936,7 +938,7 @@
     } catch (e) { return ''; }
   }
   // عدّاد زيارات مجهول (GoatCounter في نسخة الموقع فقط): أحداث بلا أسماء ولا بيانات شخصية
-  const track = (path, title) => { try { if (window.goatcounter && window.goatcounter.count) window.goatcounter.count({ path, title, event: true }); } catch (e) {} };
+  const track = (path, title) => { if (ME && ME.demo) return; try { if (window.goatcounter && window.goatcounter.count) window.goatcounter.count({ path, title, event: true }); } catch (e) {} };
   // يفتح نموذج Forms معبّأً بإنجاز الطالب: الشهادة وكودها وعدد الدروس والنقاط
   function sendToTeacher(s, st) {
     const c = s.codes.find(x => x.kind === 'C' && x.ref === String(st.id));
@@ -1067,15 +1069,18 @@
   TAB.students = el => {
     const list = Object.values(DB.students).sort((a, b) => a.grade - b.grade || a.section - b.section || a.name.localeCompare(b.name, 'ar'));
     const total = FLAT.length;
-    const classes = [...new Set(list.map(s => s.grade + '/' + s.section))];
-    el.innerHTML = list.length ? `<p class="muted">عدد الطلبة على هذا الجهاز: ${list.length}</p>
+    const classes = [...new Set(list.filter(s => !s.demo).map(s => s.grade + '/' + s.section))];
+    const demoBar = `<div class="row" style="justify-content:flex-start;margin-bottom:10px"><b>🧪 طالب تجريبي للعرض</b> (لا يظهر للطلبة ولا يدخل في الإحصائيات):<button class="btn sm" data-demo="open">مفتوح بالكامل</button><button class="btn sm" data-demo="full">مكتمل بكل الشهادات</button></div>`;
+    el.innerHTML = demoBar + (list.length ? `<p class="muted">عدد الطلبة على هذا الجهاز: ${list.filter(s => !s.demo).length}</p>
       <div class="row" style="justify-content:flex-start;margin-bottom:10px"><b>🖨️ بطاقات النقل</b> (كود وQR لكل طالب ليكمل في البيت):
         <select class="field" id="cdC">${classes.map(c => `<option>${c}</option>`).join('')}</select><button class="btn sm" id="cardsBtn">عرض البطاقات</button></div><div style="max-height:56vh;overflow:auto"><table class="codes-table">
       <tr><th>الاسم</th><th>الصف</th><th>XP</th><th>التقدّم</th><th>الأوسمة</th><th>الشهادات</th><th></th></tr>
-      ${list.map(s => { const d = FLAT.filter(it => isDone(s, it)).length; return `<tr><td><b style="color:var(--ink)">${esc(s.name)}</b></td><td>${s.grade}/${s.section}</td><td>${s.xp}</td><td>${d}/${total} (${Math.round(d / total * 100)}%)</td><td>${Object.keys(s.badges).length}</td><td>${s.codes.filter(c => c.kind === 'C').map(c => c.ref === '7' ? '🏆' : 'م' + c.ref).join('، ') || '—'}</td>
-        <td><button class="btn ghost sm" data-v="${s.id}">الشهادات</button> <button class="btn ghost sm" data-n="${s.id}">✏️ الاسم</button> <button class="btn bad sm" data-d="${s.id}">حذف</button></td></tr>`; }).join('')}</table></div>` : '<p class="muted">لا يوجد طلبة بعد.</p>';
+      ${list.map(s => { const d = FLAT.filter(it => isDone(s, it)).length; return `<tr><td><b style="color:var(--ink)">${esc(s.name)}</b>${s.demo ? ' <span class="pill sm">🧪 تجريبي</span>' : ''}</td><td>${s.grade}/${s.section}</td><td>${s.xp}</td><td>${d}/${total} (${Math.round(d / total * 100)}%)</td><td>${Object.keys(s.badges).length}</td><td>${s.codes.filter(c => c.kind === 'C').map(c => c.ref === '7' ? '🏆' : 'م' + c.ref).join('، ') || '—'}</td>
+        <td>${s.demo ? `<button class="btn sm" data-in="${s.id}">▶️ دخول</button> ` : ''}<button class="btn ghost sm" data-v="${s.id}">الشهادات</button> <button class="btn ghost sm" data-n="${s.id}">✏️ الاسم</button> <button class="btn bad sm" data-d="${s.id}">حذف</button></td></tr>`; }).join('')}</table></div>` : '<p class="muted">لا يوجد طلبة بعد.</p>');
+    $$('[data-demo]', el).forEach(b => b.onclick = () => makeDemo(b.dataset.demo));
+    $$('[data-in]', el).forEach(b => b.onclick = () => { $('#modalRoot').innerHTML = ''; enter(DB.students[b.dataset.in]); });
     if ($('#cardsBtn', el)) $('#cardsBtn', el).onclick = () => {
-      const kids = list.filter(s => s.grade + '/' + s.section === $('#cdC', el).value);
+      const kids = list.filter(s => !s.demo && s.grade + '/' + s.section === $('#cdC', el).value);
       const card = s => { const code = transferCode(s), qr = qrcode(0, 'M'); qr.addData(SITE_URL + '#c=' + code.replace(/-/g, '')); qr.make();
         return `<div class="xcard"><div class="xc-app">${APP_NAME}</div><div class="xc-name">${esc(s.name)}</div><div class="xc-cls">${classLabel(s)}</div>
           <div class="xc-qr">${qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true, alt: 'رمز نقل التقدّم' })}</div><div class="xc-code ltr">${code}</div>
@@ -1112,6 +1117,22 @@
       if (await confirmBox(`حذف الطالب <b>${esc(s.name)}</b> وكل تقدّمه من هذا الجهاز؟`, 'حذف')) { delete DB.students[s.id]; save(); teacherPanel('students'); }
     });
   };
+  // طالب تجريبي للعرض: «open» كل الدروس مفتوحة، «full» أنهى كل شيء ومعه كل الشهادات والأوسمة
+  function makeDemo(kind) {
+    let s = Object.values(DB.students).find(x => x.demo === kind);
+    if (!s) {
+      const now = new Date().toISOString(), id = 'demo-' + kind;
+      s = DB.students[id] = { id, name: kind === 'open' ? 'طالب تجريبي مفتوح' : 'طالب تجريبي مكتمل', grade: 6, section: 1, created: now, xp: 0, done: {}, codes: [], badges: {}, heard: {}, demo: kind };
+      if (kind === 'full') {
+        FLAT.forEach(it => { s.done[it.key] = { date: now, perfect: true, mistakes: 0 }; s.xp += XP[it.type];
+          if (it.type === 'boss') addCode(s, 'C', String(it.stage.id), it.stage.certName); else addCode(s, 'D', it.ref, it.title); });
+        addCode(s, 'C', '7', FINAL.certName);
+        BADGES.forEach(b => { s.badges[b.id] = now; addCode(s, 'B', String(b.id).padStart(2, '0'), 'وسام: ' + b.title); });
+      }
+      save();
+    }
+    $('#modalRoot').innerHTML = ''; enter(s);
+  }
   TAB.data = el => {
     el.innerHTML = `${NATIVE ? `<h3 class="sec">📦 تصدير نسخة للطلبة (zip)</h3><p class="muted">ملف zip فيه البرنامج مع مجلد تعديلاتك (الأسئلة، الشهادة، الترويسة، الرقم السري) — بدون بيانات الطلبة. انسخه لأجهزة الطلبة وفُكّ الضغط ثم شغّل البرنامج.</p><button class="btn" id="dZip">تصدير نسخة الطلبة</button>` : ''}
       <h3 class="sec">🌐 ملف تعديلات الموقع (custom.json)</h3><p class="muted">ملف موقّع فيه تعديلاتك (الأسئلة، الشهادة، الترويسة، كلمة المرور، روابط Forms وTeams). ارفعه إلى مجلد التطبيق على الموقع ليصل لكل الطلبة.</p><button class="btn ghost" id="dSite">تصدير ملف الموقع</button>
@@ -1128,7 +1149,7 @@
     if (NATIVE) NATIVE.where().then(w => $('#dWhere').innerHTML = '📁 مكان حفظ البيانات: <span class="ltr">' + esc(w) + '</span>');
     $('#dCsv').onclick = () => {
       const rows = [['الاسم', 'الصف', 'الشعبة', 'XP', 'نوع الإنجاز', 'الإنجاز', 'التاريخ', 'الكود']];
-      Object.values(DB.students).forEach(s => s.codes.filter(c => c.kind === 'C').forEach(c => rows.push([s.name, s.grade, s.section, s.xp, { C: 'شهادة', B: 'وسام', D: 'درس' }[c.kind], c.title, c.date.slice(0, 10), c.code])));
+      Object.values(DB.students).filter(s => !s.demo).forEach(s => s.codes.filter(c => c.kind === 'C').forEach(c => rows.push([s.name, s.grade, s.section, s.xp, { C: 'شهادة', B: 'وسام', D: 'درس' }[c.kind], c.title, c.date.slice(0, 10), c.code])));
       const csv = '﻿' + rows.map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\r\n');
       download('Guardians-certificates-' + new Date().toISOString().slice(0, 10) + '.csv', csv);
     };
@@ -1175,6 +1196,18 @@
       <label style="grid-column:1/-1">رابط Microsoft Forms المعبّأ مسبقاً (لزر «أرسل شهادتي للمعلم»)<input class="field ltr" id="sForms" value="${esc(S.formsLink || '')}" placeholder="https://forms.office.com/Pages/ResponsePage.aspx?id=...">
         <span class="muted" style="font-weight:400;font-size:14px">في Forms اختر «الحصول على رابط معبّأ مسبقاً» واكتب في الإجابات الكلمات: <span class="ltr">NAME · CLASS · STAGE · CODE · APP</span></span></label>
     </div><div style="margin-top:14px"><button class="btn" id="sSave">حفظ الإعدادات</button></div>
+    <h3 class="sec">🧪 إرسال تجريبي إلى Forms</h3>
+    <p class="muted">يفتح الاستمارة معبّأة باسم وفرقة تختارهما لتجربة وصول البيانات إلى Excel دون إنهاء الدروس، ثم تضغط «إرسال» فيها. تُسجَّل الإجابة ببريدك أنت؛ ولتجربة حالة «معتمد» أضف بريدك مؤقتاً في جدول Roster.</p>
+    <div class="form-grid"><label>اسم الطالب<input class="field" id="tName" value="طالب تجريبي للاختبار"></label>
+      <div class="row" style="justify-content:flex-start"><label>الصف<select class="field" id="tG">${[1, 2, 3, 4, 5, 6].map(g => `<option ${g === 6 ? 'selected' : ''}>${g}</option>`).join('')}</select></label><label>الشعبة<select class="field" id="tS">${Array.from({ length: 10 }, (_, i) => `<option>${i + 1}</option>`).join('')}</select></label></div>
+      <label style="grid-column:1/-1">الشهادة<select class="field" id="tSt">${[...STAGES, FINAL].map(x => `<option value="${x.id}">${esc(certTitle(x))}</option>`).join('')}</select></label></div>
+    <button class="btn ghost" id="tSend">🧪 افتح الاستمارة معبّأة</button>
+    <h3 class="sec">🎯 وضع الفعالية</h3>
+    <p class="muted">افتح قسماً واحداً فقط لفعالية عن موضوع معيّن، أو أوقف التطبيق كلياً. يصل الإعداد إلى الطلبة بعد <b>«📤 تصدير / استيراد» ← «تصدير ملف الموقع»</b> ورفع custom.json مكان القديم.</p>
+    <div class="form-grid"><label>الأقسام المتاحة للطلبة<select class="field" id="eFocus"><option value="">كل الأقسام (الوضع العادي)</option>${STAGES.map(x => `<option value="${x.id}" ${String(S.focusStage || '') === String(x.id) ? 'selected' : ''}>${x.icon} المرحلة ${x.id} فقط: ${esc(x.title)}</option>`).join('')}</select></label>
+      <label class="chk" style="align-self:end;display:flex;gap:8px;align-items:center;padding-bottom:14px"><input type="checkbox" id="eClosed" ${S.closed ? 'checked' : ''}> ⏸️ إيقاف التطبيق (لا يستطيع الطلبة الدخول)</label>
+      <label style="grid-column:1/-1">رسالة الإيقاف للطلبة<input class="field" id="eMsg" value="${esc(S.closedMsg || '')}" placeholder="التطبيق متوقف مؤقتاً. نراكم قريباً! 👋"></label></div>
+    <button class="btn" id="eSave">حفظ وضع الفعالية</button>
     <h3 class="sec">🖼️ ترويسة الشهادة</h3>
     <img class="lh-prev" src="${LETTERHEAD || 'letterhead.png'}" alt="">
     <div class="row" style="justify-content:flex-start"><button class="btn ghost" id="lhPick">تغيير الترويسة (صورة PNG أو JPG)</button>${LETTERHEAD ? '<button class="btn ghost" id="lhReset">استعادة الترويسة الأصلية</button>' : ''}</div>
@@ -1191,6 +1224,20 @@
       if (passError(p1)) return toast(passError(p1));
       if (p1 !== $('#cP2').value) return toast('❌ كلمتا المرور غير متطابقتين');
       await setPass(p1); ['cOld', 'cP1', 'cP2'].forEach(k => $('#' + k).value = ''); toast('✅ تم تغيير كلمة المرور');
+    };
+    $('#eSave').onclick = async () => {
+      Object.assign(CUSTOM.settings, { focusStage: $('#eFocus').value, closed: $('#eClosed').checked, closedMsg: $('#eMsg').value.trim() });
+      await saveCustom(); if (!ME) renderLogin();
+      toast('✅ تم الحفظ على هذا الجهاز.<br>ليصل إلى الطلبة: صدّر <b>ملف الموقع</b> وارفعه مكان custom.json.');
+    };
+    $('#tSend').onclick = () => {
+      if (!SET().formsLink) return toast('❌ احفظ رابط Forms أولاً في الأعلى.');
+      const name = $('#tName').value.replace(/\s+/g, ' ').trim(); if (!name) return toast('❌ اكتب اسم الطالب');
+      const st = [...STAGES, FINAL].find(x => String(x.id) === $('#tSt').value), upto = st.final ? FLAT : FLAT.filter(it => it.stage.id <= st.id);
+      const t = { name, grade: +$('#tG').value, section: +$('#tS').value, done: {}, xp: 0, codes: [] };
+      upto.forEach(it => { t.done[it.key] = 1; t.xp += XP[it.type]; });
+      t.codes.push({ kind: 'C', ref: String(st.id), code: Codes.make('C', String(st.id), t, new Date().toISOString()) });
+      sendToTeacher(t, st);
     };
     $('#sSave').onclick = () => {
       const mail = $('#sMail').value.trim();
@@ -1301,6 +1348,9 @@
   window.__dbg = { get P() { return P; }, get ME() { return ME; }, result: (ok) => result(ok) };
   // رابط رمز QR: ‎#c=الكود‎ يفتح نافذة النقل والكود مكتوب فيها
   const codeFromHash = () => { const m = location.hash.match(/#c=(\d{16})/); if (!m) return; history.replaceState(null, '', location.pathname + location.search); askTransfer(m[1].replace(/(\d{4})(?=\d)/g, '$1-')); };
-  loadDB().then(loadCustom).then(renderLogin).then(codeFromHash);
-  addEventListener('hashchange', codeFromHash);
+  // لوحة المعلم مخفية عن الطلبة: تُفتح بالرابط ‎#teacher‎ أو بالاختصار Ctrl+Alt+T
+  const teacherFromHash = () => { if (location.hash !== '#teacher') return; history.replaceState(null, '', location.pathname + location.search); teacherLogin(); };
+  document.addEventListener('keydown', e => { if (e.ctrlKey && e.altKey && e.code === 'KeyT') { e.preventDefault(); teacherLogin(); } });
+  loadDB().then(loadCustom).then(renderLogin).then(codeFromHash).then(teacherFromHash);
+  addEventListener('hashchange', () => { codeFromHash(); teacherFromHash(); });
 })();
