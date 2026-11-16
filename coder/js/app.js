@@ -166,8 +166,9 @@
   const XP = { lesson: 10, practice: 15, quiz: 25 };
   const isDone = (s, it) => !!s.done[it.key];
   // وضع الفعالية: قسم واحد مفتوح (CUSTOM.settings.focusStage)، وطالب الديمو «المفتوح» يتنقّل بحرية
-  const focusId = () => String(SET().focusStage || '');
-  function isUnlocked(s, it) { const i = FLAT.indexOf(it); return i === 0 || s.demo === 'open' || isDone(s, FLAT[i - 1]) || (focusId() === String(it.stage.id) && it === it.stage.items[0]); }
+  const focusIds = () => Array.isArray(SET().focusStages) ? SET().focusStages.map(String) : [];
+  const inFocus = st => focusIds().includes(String(st.id));
+  function isUnlocked(s, it) { const i = FLAT.indexOf(it); return i === 0 || s.demo === 'open' || isDone(s, FLAT[i - 1]) || (inFocus(it.stage) && it === it.stage.items[0]); }
   const stageDone = (s, st) => st.items.every(it => isDone(s, it));
   // شهادة إتمام المنهج كاملاً (بعد المراحل الخمس)
   const FINAL = { id: 6, icon: '🏆', color: '#e6a100', title: 'إتمام المنهج كاملاً', en: 'Full Course', final: true };
@@ -275,10 +276,10 @@
         <button class="iconbtn" id="sndBtn" title="الصوت">${DB.settings.sound ? '🔊' : '🔇'}</button>
         <button class="iconbtn" id="outBtn" title="خروج">🚪</button>
       </div>
-      <div class="home-wrap">${s.codes.some(c => c.kind === 'C' && c.ref === '6') ? `<div class="final-banner"><span style="font-size:48px">🏆</span><div><b>أتممت منهج البرمجة كاملاً!</b><br>أنت الآن ${esc(BADGES.find(b => b.id === 12).title)}.</div><button class="btn ok" data-cert="6">📜 شهادة إتمام المنهج</button></div>` : ''}${focusId() ? `<div class="focus-banner">🎯 فعالية اليوم: ${esc((STAGES.find(x => String(x.id) === focusId()) || {}).title || '')}</div>` : ''}${STAGES.map((st, si) => {
-        if (focusId() && focusId() !== String(st.id)) return '';
+      <div class="home-wrap">${s.codes.some(c => c.kind === 'C' && c.ref === '6') ? `<div class="final-banner"><span style="font-size:48px">🏆</span><div><b>أتممت منهج البرمجة كاملاً!</b><br>أنت الآن ${esc(BADGES.find(b => b.id === 12).title)}.</div><button class="btn ok" data-cert="6">📜 شهادة إتمام المنهج</button></div>` : ''}${focusIds().length ? `<div class="focus-banner">🎯 فعالية اليوم: ${STAGES.filter(inFocus).map(x => esc(x.title)).join(' · ')}</div>` : ''}${STAGES.map((st, si) => {
+        if (focusIds().length && !inFocus(st)) return '';
         const done = st.items.filter(it => isDone(s, it)).length;
-        const locked = si > 0 && s.demo !== 'open' && !focusId() && !stageDone(s, STAGES[si - 1]);
+        const locked = si > 0 && s.demo !== 'open' && !focusIds().length && !stageDone(s, STAGES[si - 1]);
         const cert = s.codes.find(c => c.kind === 'C' && c.ref === String(st.id));
         return `<section class="stage ${locked ? 'locked' : ''}">
           <div class="stage-head" style="background:linear-gradient(135deg, ${st.color}, ${st.color}cc)">
@@ -1195,8 +1196,8 @@
       <label style="grid-column:1/-1">الشهادة<select class="field" id="tSt">${[...STAGES, FINAL].map(x => `<option value="${x.id}">${esc(certTitle(x))}</option>`).join('')}</select></label></div>
     <button class="btn ghost" id="tSend">🧪 افتح الاستمارة معبّأة</button>
     <h3 class="sec">🎯 وضع الفعالية</h3>
-    <p class="muted">افتح قسماً واحداً فقط لفعالية عن موضوع معيّن، أو أوقف التطبيق كلياً. يصل الإعداد إلى الطلبة بعد <b>«📤 تصدير / استيراد» ← «تصدير ملف الموقع»</b> ورفع custom.json مكان القديم.</p>
-    <div class="form-grid"><label>الأقسام المتاحة للطلبة<select class="field" id="eFocus"><option value="">كل الأقسام (الوضع العادي)</option>${STAGES.map(x => `<option value="${x.id}" ${String(S.focusStage || '') === String(x.id) ? 'selected' : ''}>${x.icon} المرحلة ${x.id} فقط: ${esc(x.title)}</option>`).join('')}</select></label>
+    <p class="muted">افتح قسماً أو أكثر فقط لفعالية عن موضوع معيّن، أو أوقف التطبيق كلياً. يصل الإعداد إلى الطلبة بعد <b>«📤 تصدير / استيراد» ← «تصدير ملف الموقع»</b> ورفع custom.json مكان القديم.</p>
+    <div class="form-grid"><div style="grid-column:1/-1"><b>الأقسام المتاحة للطلبة</b> <span class="muted">(لا تختر شيئاً = كل الأقسام كالمعتاد)</span><div class="row" style="justify-content:flex-start;margin-top:6px">${STAGES.map(x => `<label class="chk" style="display:flex;gap:6px;align-items:center;border:2px solid var(--line);border-radius:12px;padding:6px 10px"><input type="checkbox" class="eFoc" value="${x.id}" ${focusIds().includes(String(x.id)) ? 'checked' : ''}> ${x.icon} ${esc(x.title)}</label>`).join('')}</div></div>
       <label class="chk" style="align-self:end;display:flex;gap:8px;align-items:center;padding-bottom:14px"><input type="checkbox" id="eClosed" ${S.closed ? 'checked' : ''}> ⏸️ إيقاف التطبيق (لا يستطيع الطلبة الدخول)</label>
       <label style="grid-column:1/-1">رسالة الإيقاف للطلبة<input class="field" id="eMsg" value="${esc(S.closedMsg || '')}" placeholder="التطبيق متوقف مؤقتاً. نراكم قريباً! 👋"></label></div>
     <button class="btn" id="eSave">حفظ وضع الفعالية</button>
@@ -1218,7 +1219,8 @@
       await setPass(p1); ['cOld', 'cP1', 'cP2'].forEach(k => $('#' + k).value = ''); toast('✅ تم تغيير كلمة المرور');
     };
     $('#eSave').onclick = async () => {
-      Object.assign(CUSTOM.settings, { focusStage: $('#eFocus').value, closed: $('#eClosed').checked, closedMsg: $('#eMsg').value.trim() });
+      delete CUSTOM.settings.focusStage;
+      Object.assign(CUSTOM.settings, { focusStages: $$('.eFoc').filter(x => x.checked).map(x => x.value), closed: $('#eClosed').checked, closedMsg: $('#eMsg').value.trim() });
       await saveCustom(); if (!ME) renderLogin();
       toast('✅ تم الحفظ على هذا الجهاز.<br>ليصل إلى الطلبة: صدّر <b>ملف الموقع</b> وارفعه مكان custom.json.');
     };
@@ -1262,7 +1264,7 @@
           <div class="row"><button class="btn ghost sm" data-pv="${it.key}">👁️ معاينة</button><button class="btn sm" data-op="${it.key}">📝 الأسئلة</button></div></div>
         ${it.key === openKey ? `<ol class="ls-cards">${it.cards.map((c, i) => `<li><span class="pill sm ${EDITABLE[c.t] ? 'ed' : ''}">${CARD_LABEL[c.t] || c.t}</span> <span class="ls-sum">${esc(cardSummary(c))}</span>
           <span class="ls-act">${EDITABLE[c.t] ? `<button class="btn ghost sm" data-ed="${i}">✏️ تعديل</button><button class="btn bad sm" data-del="${i}">🗑️</button>` : ''}<button class="btn ghost sm" data-add="${i}">➕ سؤال بعده</button></span></li>`).join('')}</ol>
-          ${CUSTOM.lessons[it.key] ? '<button class="btn ghost sm" data-rs>↩️ إرجاع هذا الدرس لأصله</button>' : ''}` : ''}</div>`).join('')}</div>`;
+          <div class="row" style="justify-content:flex-start"><button class="btn sm" data-ai>🤖 برومبت للذكاء الاصطناعي</button><button class="btn sm" data-bulk>📥 إضافة جماعية (لصق)</button>${CUSTOM.lessons[it.key] ? '<button class="btn ghost sm" data-rs>↩️ إرجاع هذا الدرس لأصله</button>' : ''}</div>` : ''}</div>`).join('')}</div>`;
     $$('[data-st]', el).forEach(b => b.onclick = () => { LS_STAGE = +b.dataset.st; TAB.lessons(el); });
     $$('[data-op]', el).forEach(b => b.onclick = () => TAB.lessons(el, b.dataset.op === openKey ? null : b.dataset.op));
     $$('[data-pv]', el).forEach(b => b.onclick = () => { $('#modalRoot').innerHTML = ''; startItem(FLAT.find(x => x.key === b.dataset.pv), true); });
@@ -1279,9 +1281,102 @@
       if (!await confirmBox('حذف هذا السؤال؟<br><span class="muted">' + esc(cardSummary(it.cards[+b.dataset.del])) + '</span>', 'حذف')) return;
       const cards = it.cards.slice(); cards.splice(+b.dataset.del, 1); setCards(it, cards); back();
     });
+    $('[data-ai]', el).onclick = () => aiPrompt(it);
+    $('[data-bulk]', el).onclick = () => bulkAdd(it, back);
     const rs = $('[data-rs]', el);
     if (rs) rs.onclick = async () => { if (await confirmBox('إرجاع هذا الدرس لأسئلته الأصلية؟ ستُحذف تعديلاتك عليه.', 'إرجاع')) { delete CUSTOM.lessons[it.key]; it.cards = it.orig; saveCustom(); back(); } };
   };
+  // ---- إضافة جماعية: برومبت جاهز للذكاء الاصطناعي، ثم لصق النتيجة (JSON) في الدرس ----
+  function aiPrompt(it) {
+    const m = modal(`<h2>🤖 برومبت للذكاء الاصطناعي — ${esc(it.title)}</h2>
+      <p class="muted">املأ التفاصيل، ثم انسخ البرومبت والصقه في Copilot أو أي أداة ذكاء اصطناعي. انسخ ما يردّه والصقه في «📥 إضافة جماعية».</p>
+      <div class="editor-form">
+        <label>الموضوع<input class="field" id="aTopic" value="${esc(it.title)}"></label>
+        <label>تفاصيل ونقاط يجب تغطيتها (اختياري)<textarea class="field" id="aDet" rows="3" placeholder="مثال: التنمر في الألعاب الجماعية، ماذا أفعل إذا رأيت صديقي يتعرّض للتنمر، إبلاغ ولي الأمر..."></textarea></label>
+        <div class="row" style="justify-content:flex-start">
+          <label>الصف<select class="field" id="aG">${[1, 2, 3, 4, 5, 6].map(g => `<option ${g === 5 ? 'selected' : ''}>${g}</option>`).join('')}</select></label>
+          <label>بطاقات شرح<input class="field" id="aI" type="number" min="0" max="10" value="2" style="width:80px"></label>
+          <label>اختيار من متعدد<input class="field" id="aM" type="number" min="0" max="20" value="5" style="width:80px"></label>
+          <label>أكمل الفراغ<input class="field" id="aF" type="number" min="0" max="20" value="3" style="width:80px"></label>
+        </div>
+      </div>
+      <textarea class="field" id="aOut" rows="8" dir="rtl" readonly style="width:100%;margin-top:10px"></textarea>
+      <div class="row"><button class="btn" data-cp>📋 نسخ البرومبت</button><button class="btn ghost" data-x>إغلاق</button></div>`, 'wide');
+    const build = () => {
+      const v = k => $('#' + k, m.el).value.trim();
+      $('#aOut', m.el).value = `أنت معلم خبير تكتب محتوى لتطبيق تعليمي تفاعلي لطلبة الصف ${v('aG')} الابتدائي في البحرين، اسمه «${APP_NAME}».
+الدرس الحالي: «${it.title}» ضمن مرحلة «${it.stage.title}».
+الموضوع المطلوب: ${v('aTopic')}${v('aDet') ? '\nالتفاصيل والنقاط التي يجب تغطيتها: ' + v('aDet') : ''}
+
+المطلوب: ${v('aI')} بطاقات شرح، و${v('aM')} أسئلة اختيار من متعدد، و${v('aF')} أسئلة أكمل الفراغ، مرتّبة بأسلوب «شرح قصير ثم تمرين فوري»: ضع كل بطاقة شرح قبل الأسئلة المتعلقة بها.
+
+القواعد:
+- لغة عربية فصيحة بسيطة تناسب عمر الطالب، وجمل قصيرة، وإيموجي مناسب باعتدال.
+- اكتب المصطلحات الإنجليزية داخل نجمتين مزدوجتين مع ترجمتها، مثل: **برنامج** (**Program**) — التطبيق يحوّل الكلمة الإنجليزية بين النجمتين إلى زر نطق. استخدم \`علامة الكود\` للأوامر القصيرة.
+- اختيار من متعدد: من 2 إلى 6 خيارات، و"a" رقم الإجابة الصحيحة (يبدأ العدّ من 0)، أو مصفوفة أرقام إذا كان أكثر من إجابة صحيحة. الخيارات الخاطئة معقولة وليست سخيفة.
+- أكمل الفراغ: في "src" ضع {{0}} و{{1}}… مكان الفراغات بالترتيب، و"a" الإجابات بنفس الترتيب، و"tokens" كل الإجابات مع 1 إلى 3 كلمات تمويه. كل إجابة كلمة أو كلمتان.
+- "lead" و"why" و"note" و"title" اختيارية.
+- لا تكرر نفس السؤال، وتأكد أن المعلومات صحيحة علمياً ومناسبة للأطفال.
+
+أخرج النتيجة مصفوفة JSON صالحة فقط، دون أي شرح أو نص قبلها أو بعدها، وبهذا الشكل تماماً:
+[
+  {"t":"intro","img":"🤖","title":"عنوان قصير","text":"شرح قصير بلغة بسيطة.\\nسطر ثانٍ عند الحاجة.","note":"معلومة إضافية (اختياري)"},
+  {"t":"mcq","lead":"سطر شرح قصير قبل السؤال (اختياري)","q":"نص السؤال؟","options":["خيار 1","خيار 2","خيار 3"],"a":0,"why":"توضيح يظهر بعد الإجابة"},
+  {"t":"mcq","q":"اختر كل الإجابات الصحيحة:","options":["أ","ب","ج","د"],"a":[0,2]},
+  {"t":"fill","q":"أكمل:","src":"{{0}} = خطوات مرتّبة لحلّ مشكلة","a":["Algorithm"],"tokens":["Algorithm","Robot","Bug"]}
+]`;
+    };
+    $$('input,textarea,select', m.el).forEach(x => x.oninput = build); build();
+    $('[data-cp]', m.el).onclick = async e => { await copy($('#aOut', m.el).value); e.target.textContent = '✅ تم النسخ'; };
+    $('[data-x]', m.el).onclick = m.close;
+  }
+  // يتحقق من بطاقة واحدة ويُرجعها نظيفة بالحقول المسموحة فقط، أو نص الخطأ
+  function cleanCard(c) {
+    const str = x => typeof x === 'string' && x.trim() !== '', o = {};
+    if (!c || typeof c !== 'object') return 'ليست بطاقة';
+    for (const k of ['title', 'lead', 'why', 'note']) if (str(c[k])) o[k] = c[k].trim();
+    if (c.t === 'intro') { if (!str(c.text)) return 'بطاقة شرح بلا "text"'; if (str(c.img)) o.img = c.img.replace(/[<>&"']/g, '').slice(0, 8); return { t: 'intro', ...o, text: c.text.trim() }; }
+    if (!str(c.q)) return 'سؤال بلا "q"';
+    o.q = c.q.trim();
+    if (c.t === 'mcq') {
+      const opts = Array.isArray(c.options) ? c.options.filter(str).map(x => x.trim()) : [];
+      if (opts.length !== (c.options || []).length || opts.length < 2 || opts.length > 6) return 'الخيارات يجب أن تكون من 2 إلى 6: ' + o.q;
+      const a = Array.isArray(c.a) ? c.a : [c.a];
+      if (!a.length || a.some(i => !Number.isInteger(i) || i < 0 || i >= opts.length)) return 'رقم الإجابة الصحيحة "a" غير صحيح: ' + o.q;
+      return { t: 'mcq', ...o, options: opts, ...(a.length > 1 ? { multi: true, a: [...new Set(a)] } : { a: a[0] }) };
+    }
+    if (c.t === 'fill') {
+      const a = Array.isArray(c.a) ? c.a.filter(str).map(x => x.trim()) : [];
+      if (!a.length || a.length !== c.a.length) return 'أكمل الفراغ بلا إجابات "a": ' + o.q;
+      if (!str(c.src) || a.some((_, i) => !c.src.includes('{{' + i + '}}')) || /\{\{(\d+)\}\}/.test(c.src.replace(/\{\{(\d+)\}\}/g, (x, i) => +i < a.length ? '' : x))) return 'الفراغات {{0}}… في "src" لا تطابق الإجابات: ' + o.q;
+      const tokens = [...new Set((Array.isArray(c.tokens) ? c.tokens.filter(str).map(x => x.trim()) : []).concat(a))];
+      return { t: 'fill', ...o, src: c.src, a, tokens, lang: 'txt' };
+    }
+    return 'نوع غير مدعوم "' + c.t + '" (المسموح: intro و mcq و fill)';
+  }
+  function bulkAdd(it, done) {
+    const m = modal(`<h2>📥 إضافة جماعية — ${esc(it.title)}</h2>
+      <p class="muted">الصق هنا ما ردّه الذكاء الاصطناعي (مصفوفة JSON). المسموح: بطاقات شرح وأسئلة اختيار من متعدد وأكمل الفراغ.</p>
+      <textarea class="field ltr" id="bIn" rows="12" dir="auto" style="width:100%" placeholder='[ {"t":"mcq", "q":"...", "options":["...","..."], "a":0} ]'></textarea>
+      <div class="row" style="justify-content:flex-start"><label class="chk"><input type="radio" name="bMode" value="add" checked> أضفها إلى الدرس (قبل الملخّص الأخير)</label>
+        <label class="chk"><input type="radio" name="bMode" value="replace"> استبدل بطاقات الدرس كلها بها <span class="muted">(يمكن الإرجاع لاحقاً)</span></label></div>
+      <p class="warn" id="bMsg"></p>
+      <div class="row"><button class="btn" data-s>إضافة</button><button class="btn ghost" data-x>إلغاء</button></div>`, 'wide');
+    $('[data-x]', m.el).onclick = m.close;
+    $('[data-s]', m.el).onclick = () => {
+      const msg = t => { $('#bMsg', m.el).innerHTML = t; };
+      let arr; const raw = $('#bIn', m.el).value.trim(), from = raw.indexOf('['), to = raw.lastIndexOf(']');
+      try { arr = JSON.parse(raw.slice(from, to + 1)); } catch (e) { return msg('❌ النص ليس JSON صالحاً. تأكد أنك نسخت المصفوفة كاملة من [ إلى ].'); }
+      if (!Array.isArray(arr) || !arr.length) return msg('❌ لا توجد بطاقات.');
+      const cards = arr.map(cleanCard), bad = cards.map((c, i) => typeof c === 'string' ? `البطاقة ${i + 1}: ${esc(c)}` : '').filter(Boolean);
+      if (bad.length) return msg('❌ لم يُضف شيء. صحّح ما يلي:<br>' + bad.slice(0, 8).join('<br>'));
+      let out;
+      if ($('[name=bMode]:checked', m.el).value === 'replace') out = cards;
+      else { out = it.cards.slice(); const last = out.length && out[out.length - 1].t === 'recap' ? out.length - 1 : out.length; out.splice(last, 0, ...cards); }
+      setCards(it, out); m.close(); done();
+      toast(`✅ أُضيفت ${cards.length} بطاقة. جرّبها بزر «👁️ معاينة»، ثم صدّر <b>ملف الموقع</b> ليصل التعديل للطلبة.`);
+    };
+  }
   // محرّر سؤال: idx = موقع السؤال (أو الموقع الذي يُضاف بعده)
   function editCard(it, idx, isNew, t, done) {
     const c = isNew ? (t === 'mcq' ? { t, q: '', options: ['', '', ''], a: -1 } : { t, q: 'أكمل الفراغ:', src: '', tokens: [], a: [], lang: 'txt' }) : JSON.parse(JSON.stringify(it.cards[idx]));
