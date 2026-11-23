@@ -31,3 +31,8 @@ body { margin: 0; font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif; color: v
 footer { text-align: center; padding: 18px 0 32px; color: var(--muted); }
 footer p { margin: 0 0 6px; font-weight: 700; color: var(--ink); }
 .ig { display: inline-flex; min-height: 44px; align-items: center; gap: 8px; padding: 4px 16px; border: 2px solid var(--line); border-radius: 999px; background: #fff; color: var(--ink); font-weight: 700; text-decoration: none; }
+.section-t { margin: 32px 0 12px; font-size: 26px; font-weight: 900; }
+.apps.teachers { margin-top: 0; }
+.apps.teachers .app img { border-radius: 20px; }
+.section-t span { color: var(--muted); font-size: 18px; font-weight: 700; margin-inline-start: 8px; }
+.section-t { margin-bottom: 0; } .section-s { margin: 0 0 14px; color: #2a6fdb; font-weight: 700; font-size: 18px; }
