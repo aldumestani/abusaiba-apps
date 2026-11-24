@@ -30,7 +30,7 @@ body { margin: 0; font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif; color: v
 .title p { margin: 0 auto; max-width: 680px; color: #dbe5f5; font-size: clamp(16px, 2.3vw, 18px); }
 
 /* شريط المعلومات */
-.facts { display: grid; grid-template-columns: repeat(3, 1fr); background: #fff; border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 12px 30px rgba(15,42,82,.10); margin-top: -56px; position: relative; overflow: hidden; }
+.facts { display: grid; grid-template-columns: repeat(4, 1fr); background: #fff; border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 12px 30px rgba(15,42,82,.10); margin-top: -56px; position: relative; overflow: hidden; }
 .facts div { padding: 16px 18px; text-align: center; border-inline-start: 1px solid var(--line); }
 .facts div:first-child { border-inline-start: 0; }
 .facts b { display: block; font-size: 26px; font-weight: 900; color: var(--navy); line-height: 1.2; }
@@ -56,6 +56,21 @@ h2.sec::after { content: ''; flex: 1; height: 2px; background: linear-gradient(9
 .yr { direction: ltr; unicode-bidi: isolate; white-space: nowrap; display: inline-block; }
 .facts b .yr { font-size: inherit; color: inherit; font-weight: 900; }
 
+/* قناة اليوتيوب */
+.yt-head { display: grid; grid-template-columns: auto 1fr auto; gap: 16px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 18px 20px; }
+.yt-head .ic { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; background: var(--c); color: #fff; } .yt-head .ic svg { width: 30px; height: 30px; }
+.yt-head h3 { margin: 0; font-size: 20px; } .yt-head p { margin: 2px 0 0; color: var(--muted); font-size: 15px; }
+h3.sub { margin: 18px 0 10px; font-size: 18px; color: var(--navy); } h3.sub small { color: var(--muted); font-weight: 700; }
+.vids { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)); gap: 14px; }
+.vid { display: flex; flex-direction: column; gap: 6px; background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; text-decoration: none; color: var(--ink); transition: transform .15s, box-shadow .15s; }
+.vid:hover { transform: translateY(-3px); box-shadow: 0 10px 22px rgba(15,42,82,.12); }
+.vid:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.th { position: relative; display: block; aspect-ratio: 16 / 9; background: #dfe5ee; }
+.th img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.th i { position: absolute; inset: 0; margin: auto; width: 42px; height: 30px; border-radius: 9px; background: rgba(220,38,38,.92); color: #fff; font-style: normal; font-size: 14px; display: grid; place-items: center; }
+.vid b { padding: 0 12px; font-size: 14.5px; line-height: 1.55; }
+.vid small { padding: 0 12px 10px; color: var(--muted); font-weight: 700; font-size: 13px; margin-top: auto; }
+
 /* QR والتذييل */
 .scan { display: flex; align-items: center; gap: 20px; background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 18px 22px; margin: 34px 0 0; }
 .scan img { width: 116px; height: 116px; flex: none; }
@@ -71,6 +86,8 @@ footer { text-align: center; color: var(--muted); font-size: 14px; padding: 16px
 @media (max-width: 640px) {
   .facts b { font-size: 21px; } .facts div { padding: 12px 8px; } .det { display: none; }
   .scan { flex-direction: column; text-align: center; }
+  .facts { grid-template-columns: 1fr 1fr; } .facts div:nth-child(3) { border-inline-start: 0; } .facts div:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .yt-head { grid-template-columns: 1fr; text-align: center; justify-items: center; }
   .sign { grid-template-columns: 1fr; }
 }
 @media print {
@@ -78,7 +95,8 @@ footer { text-align: center; color: var(--muted); font-size: 14px; padding: 16px
   body { background: #fff; }
   .hero { padding: 18px 0 30px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .facts { margin-top: 12px; box-shadow: none; }
-  .card, .scan, .sign { break-inside: avoid; box-shadow: none; }
+  .card, .scan, .sign, .vid, .yt-head { break-inside: avoid; box-shadow: none; }
+  .vids { grid-template-columns: repeat(4, 1fr); } .th i { display: none; }
   footer { display: none; }
   h2.sec { break-after: avoid; } .scan { margin-top: 16px; } .sign { margin-top: 16px; }
   .btn { display: none; }
@@ -102,7 +120,8 @@ footer { text-align: center; color: var(--muted); font-size: 14px; padding: 16px
 
 <main class="wrap">
   <section class="facts" aria-label="ملخّص">
-    <div><b id="nItems">5</b><span>مشاريع ووثائق</span></div>
+    <div><b>8</b><span>مشاريع ووثائق</span></div>
+    <div><b>16</b><span>فيديو تعليمي منذ 2025</span></div>
     <div><b>3</b><span>فئات مستفيدة<em class="det">: الطلبة · المعلمون · أولياء الأمور</em></span></div>
     <div><b><span class="yr">2026–2027</span></b><span>العام الدراسي</span></div>
   </section>
@@ -125,20 +144,48 @@ footer { text-align: center; color: var(--muted); font-size: 14px; padding: 16px
       <div class="meta"><span class="badge">وثيقة PDF</span><a class="btn" href="https://drive.google.com/file/d/1O4w2EPGc362_adfraNKUxaod3pYMzokN/view?usp=sharing" target="_blank" rel="noopener">عرض الوثيقة ←</a></div>
       <span class="url">https://drive.google.com/file/d/1O4w2EPGc362_adfraNKUxaod3pYMzokN/view</span>
     </article>
-    <article class="card" style="--c:#b45309">
+    <article class="card" style="--c:#0e7490">
       <span class="num">03</span>
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10z"/></svg></span>
+      <h3>روابط اللغة الإنجليزية</h3>
+      <p>روابط البرامج والمنصّات الرقمية التي يوظّفها قسم اللغة الإنجليزية في التدريس والتدريب.</p>
+      <div class="meta"><span class="badge">وثيقة PDF</span><a class="btn" href="https://drive.google.com/file/d/1w04OARmmleTn-qiAVUG7NtUFW2LdXAt7/view?usp=sharing" target="_blank" rel="noopener">عرض الوثيقة ←</a></div>
+      <span class="url">https://drive.google.com/file/d/1w04OARmmleTn-qiAVUG7NtUFW2LdXAt7/view</span>
+    </article>
+    <article class="card" style="--c:#b45309">
+      <span class="num">04</span>
       <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3.2"/><path d="M3 21v-1.5A5.5 5.5 0 0 1 8.5 14h1A5.5 5.5 0 0 1 15 19.5V21"/><circle cx="17.5" cy="8.5" r="2.3"/><path d="M16.5 14H17a4 4 0 0 1 4 4v1"/></svg></span>
-      <h3>روابط قسم نظام الفصل</h3>
-      <p>الأدوات والموارد الرقمية التي يعتمدها معلمو الفصل في الصفوف الأولى لدعم تعلّم الطلبة ومتابعتهم.</p>
-      <div class="meta"><span class="badge">وثيقة PDF</span><a class="btn" href="https://drive.google.com/file/d/1tW2jreaA9wp2AMfM6oKZFUu6xozotFHV/view?usp=sharing" target="_blank" rel="noopener">عرض الوثيقة ←</a></div>
-      <span class="url">https://drive.google.com/file/d/1tW2jreaA9wp2AMfM6oKZFUu6xozotFHV/view</span>
+      <h3>روابط معلم نظام الفصل</h3>
+      <p>الأدوات والموارد الرقمية التي يعتمدها معلمو نظام الفصل في الصفوف الأولى لدعم تعلّم الطلبة ومتابعتهم.</p>
+      <div class="meta"><span class="badge">مستند</span><a class="btn" href="https://docs.google.com/document/d/1zT4IltpzY3Op5JxGxo_gvGv1qD3Amp6G/edit?usp=sharing" target="_blank" rel="noopener">عرض المستند ←</a></div>
+      <span class="url">https://docs.google.com/document/d/1zT4IltpzY3Op5JxGxo_gvGv1qD3Amp6G/edit</span>
+    </article>
+  </div>
+
+  <h2 class="sec">التنمية المهنية والتقويم</h2>
+  <div class="grid">
+    <article class="card" style="--c:#9333ea">
+      <span class="num">05</span>
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="14" height="14" rx="2"/><path d="M16 10l6-4v12l-6-4z"/></svg></span>
+      <h3>فيديوهات الورش التدريبية</h3>
+      <p>تسجيلات الورش التدريبية التي قُدّمت لمعلمي المدرسة، مرجعٌ للتنمية المهنية يمكن الرجوع إليه في أي وقت.</p>
+      <div class="meta"><span class="badge">مجلد فيديو</span><a class="btn" href="https://drive.google.com/drive/folders/1IDMjdamoV8ywc9gOLpu2I7oqwtYHuLpF?usp=sharing" target="_blank" rel="noopener">فتح المجلد ←</a></div>
+      <span class="url">https://drive.google.com/drive/folders/1IDMjdamoV8ywc9gOLpu2I7oqwtYHuLpF</span>
+    </article>
+    <article class="card" style="--c:#0369a1">
+      <span class="num">06</span>
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 3h6v3H9z"/><path d="M9 12l2 2 4-4M9 17h6"/></svg></span>
+      <h3>نماذج الاختبارات أونلاين <span class="yr">2025–2026</span></h3>
+      <p>نماذج الاختبارات الإلكترونية التي أعدّتها المدرسة وطبّقتها في العام الدراسي <span class="yr">2025–2026</span>.</p>
+      <div class="meta"><span class="badge">مجلد</span><a class="btn" href="https://drive.google.com/drive/folders/17UN_2rfNqYNJFCUjZM6Bsc6RNvnD4HgH?usp=sharing" target="_blank" rel="noopener">فتح المجلد ←</a></div>
+      <span class="url">https://drive.google.com/drive/folders/17UN_2rfNqYNJFCUjZM6Bsc6RNvnD4HgH</span>
     </article>
   </div>
 
   <h2 class="sec">المنصّات الرقمية للمدرسة</h2>
   <div class="grid">
     <article class="card" style="--c:#6d28d9">
-      <span class="num">04</span>
+      <span class="num">07</span>
       <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/><path d="M8.5 10.5l2 2 4-4"/></svg></span>
       <h3>منصة تطبيقات أبوصيبع التعليمية</h3>
       <p>تطبيقات تعليمية من تطوير المدرسة يتعلّم بها الطلبة من الصف أو البيت: البرمجة، والأمان الرقمي، وألعاب اللغة العربية، إلى جانب أدوات للمعلمين.</p>
@@ -146,13 +193,43 @@ footer { text-align: center; color: var(--muted); font-size: 14px; padding: 16px
       <span class="url">https://abusaiba-apps.com/</span>
     </article>
     <article class="card" style="--c:#be185d">
-      <span class="num">05</span>
+      <span class="num">08</span>
       <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/><path d="M10 20v-5h4v5"/></svg></span>
       <h3>المنصة المدرسية لأولياء الأمور</h3>
       <p>صفحة واحدة تجمع روابط التواصل والخدمات المدرسية لأولياء الأمور للعام الدراسي <span class="yr">2026–2027</span>.</p>
       <div class="meta"><span class="badge">منصة روابط</span><a class="btn" href="https://linktr.ee/Abusaibaschool" target="_blank" rel="noopener">زيارة المنصة ←</a></div>
       <span class="url">https://linktr.ee/Abusaibaschool</span>
     </article>
+  </div>
+
+  <h2 class="sec">قناة اليوتيوب التعليمية</h2>
+  <div class="yt-head">
+    <span class="ic" style="--c:#dc2626"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="4"/><path d="M10 9l5 3-5 3z" fill="currentColor"/></svg></span>
+    <div><h3>قناة JehaDmstani على يوتيوب</h3><p>شروحات مصوّرة قصيرة يُنتجها اختصاصي تكنولوجيا التعليم للطلبة وأولياء الأمور والمعلمين، تتناول مايكروسوفت تيمز والبوابة التعليمية والأدوات الرقمية. هنا 16 فيديو نُشرت منذ عام 2025.</p></div>
+    <a class="btn" href="https://www.youtube.com/@jehadmstani" target="_blank" rel="noopener">زيارة القناة ←</a>
+    <span class="url">https://www.youtube.com/@jehadmstani</span>
+  </div>
+  <h3 class="sub">👨‍🏫 للمعلمين <small>(10)</small></h3>
+  <div class="vids">
+      <a class="vid" href="https://www.youtube.com/watch?v=x9Yc5aceNFU" target="_blank" rel="noopener"><span class="th"><img src="https://i.ytimg.com/vi/x9Yc5aceNFU/mqdefault.jpg" alt="" loading="lazy" width="320" height="180"><i>▶</i></span><b>طريقة الحصول على شهادة المعلم الخبير MIEE من موقع Credly</b><small>سبتمبر 2026</small></a>
+      <a class="vid" href="https://www.youtube.com/watch?v=hQC-RjEzJvo" target="_blank" rel="noopener"><span class="th"><img src="https://i.ytimg.com/vi/hQC-RjEzJvo/mqdefault.jpg" alt="" loading="lazy" width="320" height="180"><i>▶</i></span><b>طريقة تصحيح الواجبات في التيمز 2026</b><small>مارس 2026</small></a>
+      <a class="vid" href="https://www.youtube.com/watch?v=4INWk4Z2Hbw" target="_blank" rel="noopener"><span class="th"><img src="https://i.ytimg.com/vi/4INWk4Z2Hbw/mqdefault.jpg" alt="" loading="lazy" width="320" height="180"><i>▶</i></span><b>دليل إنشاء الواجبات في مايكروسوفت تيمز</b><small>مارس 2026</small></a>
+      <a class="vid" href="https://www.youtube.com/watch?v=xbYg3gu4NbY" target="_blank" rel="noopener"><span class="th"><img src="https://i.ytimg.com/vi/xbYg3gu4NbY/mqdefault.jpg" alt="" loading="lazy" width="320" height="180"><i>▶</i></span><b>أداة مجانية لتحليل كشف الحضور في مايكروسوفت تيمز</b><small>مارس 2026</small></a>
+      <a class="vid" href="https://www.youtube.com/watch?v=N3a2Mfe2sFg" target="_blank" rel="noopener"><span class="th"><img src="https://i.ytimg.com/vi/N3a2Mfe2sFg/mqdefault.jpg" alt="" loading="lazy" width="320" height="180"><i>▶</i></span><b>إرسال الروابط للطلبة عبر التقويم</b><small>مارس 2026</small></a>
+      <a class="vid" href="https://www.youtube.com/watch?v=V9E8NC5xm9s" target="_blank" rel="noopener"><span class="th"><img src="https://i.ytimg.com/vi/V9E8NC5xm9s/mqdefault.jpg" alt="" loading="lazy" width="320" height="180"><i>▶</i></span><b>الحصول على رابط البث المباشر المسجّل</b><small>مارس 2026</small></a>
+      <a class="vid" href="https://www.youtube.com/watch?v=pHD5fVEJYWY" target="_blank" rel="noopener"><span class="th"><img src="https://i.ytimg.com/vi/pHD5fVEJYWY/mqdefault.jpg" alt="" loading="lazy" width="320" height="180"><i>▶</i></span><b>آلية بث الحصص الدراسية عبر التيمز 2026</b><small>فبراير 2026</small></a>
+      <a class="vid" href="https://www.youtube.com/watch?v=rdeY_6rxL_Q" target="_blank" rel="noopener"><span class="th"><img src="https://i.ytimg.com/vi/rdeY_6rxL_Q/mqdefault.jpg" alt="" loading="lazy" width="320" height="180"><i>▶</i></span><b>طريقة استخراج رابط إنجازات منصة مايكروسوفت التعليمية</b><small>ديسمبر 2025</small></a>
+      <a class="vid" href="https://www.youtube.com/watch?v=4rK-bNtOqf0" target="_blank" rel="noopener"><span class="th"><img src="https://i.ytimg.com/vi/4rK-bNtOqf0/mqdefault.jpg" alt="" loading="lazy" width="320" height="180"><i>▶</i></span><b>طريقة إنشاء رمز استجابة سريعة QR بدون برامج</b><small>مارس 2025</small></a>
+      <a class="vid" href="https://www.youtube.com/watch?v=YpojZ_5_BjA" target="_blank" rel="noopener"><span class="th"><img src="https://i.ytimg.com/vi/YpojZ_5_BjA/mqdefault.jpg" alt="" loading="lazy" width="320" height="180"><i>▶</i></span><b>رفع الملفات على OneDrive</b><small>مارس 2025</small></a>
+  </div>
+  <h3 class="sub">👨‍👩‍👦 للطلبة وأولياء الأمور <small>(6)</small></h3>
+  <div class="vids">
+      <a class="vid" href="https://www.youtube.com/watch?v=AuS6-sR1-Y8" target="_blank" rel="noopener"><span class="th"><img src="https://i.ytimg.com/vi/AuS6-sR1-Y8/mqdefault.jpg" alt="" loading="lazy" width="320" height="180"><i>▶</i></span><b>الدخول إلى البوابة التعليمية بعد تغيير كلمة المرور</b><small>يونيو 2026</small></a>
+      <a class="vid" href="https://www.youtube.com/watch?v=Xh0ctqHlGFE" target="_blank" rel="noopener"><span class="th"><img src="https://i.ytimg.com/vi/Xh0ctqHlGFE/mqdefault.jpg" alt="" loading="lazy" width="320" height="180"><i>▶</i></span><b>متى يفتح الاختبار في التيمز؟</b><small>أبريل 2026</small></a>
+      <a class="vid" href="https://www.youtube.com/watch?v=6cKI-8220PI" target="_blank" rel="noopener"><span class="th"><img src="https://i.ytimg.com/vi/6cKI-8220PI/mqdefault.jpg" alt="" loading="lazy" width="320" height="180"><i>▶</i></span><b>طريقة الوصول إلى الاختبارات والواجبات في مايكروسوفت تيمز</b><small>مارس 2026</small></a>
+      <a class="vid" href="https://www.youtube.com/watch?v=wCy9gsCaAHA" target="_blank" rel="noopener"><span class="th"><img src="https://i.ytimg.com/vi/wCy9gsCaAHA/mqdefault.jpg" alt="" loading="lazy" width="320" height="180"><i>▶</i></span><b>لأولياء الأمور والطلبة: طريقة سهلة لدخول الحصة أونلاين</b><small>مارس 2026</small></a>
+      <a class="vid" href="https://www.youtube.com/watch?v=HDFi02rBjgk" target="_blank" rel="noopener"><span class="th"><img src="https://i.ytimg.com/vi/HDFi02rBjgk/mqdefault.jpg" alt="" loading="lazy" width="320" height="180"><i>▶</i></span><b>استخدام مايكروسوفت تيمز لأولياء الأمور في البحرين</b><small>سبتمبر 2025</small></a>
+      <a class="vid" href="https://www.youtube.com/watch?v=5PbxxKTfr0Y" target="_blank" rel="noopener"><span class="th"><img src="https://i.ytimg.com/vi/5PbxxKTfr0Y/mqdefault.jpg" alt="" loading="lazy" width="320" height="180"><i>▶</i></span><b>تحميل برنامج mBlock</b><small>مارس 2025</small></a>
   </div>
 
   <section class="scan">
@@ -167,6 +244,5 @@ footer { text-align: center; color: var(--muted); font-size: 14px; padding: 16px
   </section>
 </main>
 <footer>مدرسة أبوصيبع الابتدائية للبنين · مملكة البحرين</footer>
-<script>document.getElementById('nItems').textContent = document.querySelectorAll('.card').length;</script>
 </body>
 </html>
