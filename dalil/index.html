@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>الدليل التوثيقي لمشاريع المدرسة — مدرسة أبوصيبع الابتدائية للبنين</title>
+<meta name="description" content="دليل يجمع روابط مشاريع مدرسة أبوصيبع الابتدائية للبنين ومبادراتها ووثائقها في مكان واحد.">
+<meta name="theme-color" content="#0f2a52">
+<link rel="icon" href="../arabic.png">
+<style>
+@font-face { font-family: 'Cairo'; src: url(../cairo-arabic-400-normal.woff2) format('woff2'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Cairo'; src: url(../cairo-arabic-700-normal.woff2) format('woff2'); font-weight: 700; font-display: swap; }
+@font-face { font-family: 'Cairo'; src: url(../cairo-arabic-900-normal.woff2) format('woff2'); font-weight: 900; font-display: swap; }
+:root { --navy: #0f2a52; --navy2: #1b4b8f; --gold: #c9a227; --gold2: #f2d675; --ink: #14233b; --muted: #5d6b80; --line: #e2e8f1; --bg: #f5f7fb; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif; color: var(--ink); background: var(--bg); line-height: 1.7; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+
+/* الترويسة */
+.hero { position: relative; background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%); color: #fff; padding: 34px 0 96px; overflow: hidden; }
+.hero::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle at 12% 20%, rgba(255,255,255,.07) 0 120px, transparent 121px), radial-gradient(circle at 92% 85%, rgba(242,214,117,.10) 0 180px, transparent 181px); }
+.hero .wrap { position: relative; }
+.org { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; font-weight: 700; font-size: 15px; color: #dbe5f5; border-bottom: 1px solid rgba(255,255,255,.18); padding-bottom: 14px; }
+.org b { color: #fff; font-size: 17px; }
+.year { background: rgba(242,214,117,.16); color: var(--gold2); border: 1px solid rgba(242,214,117,.4); border-radius: 999px; padding: 2px 14px; font-size: 14px; }
+.title { text-align: center; margin-top: 34px; }
+.title .kicker { display: inline-block; color: var(--gold2); font-weight: 700; letter-spacing: .5px; margin: 0 0 4px; }
+.title h1 { margin: 0; font-size: clamp(30px, 5.4vw, 50px); font-weight: 900; line-height: 1.3; text-wrap: balance; }
+.title .rule { width: 90px; height: 4px; background: var(--gold); border-radius: 4px; margin: 14px auto; }
+.title p { margin: 0 auto; max-width: 680px; color: #dbe5f5; font-size: clamp(16px, 2.3vw, 18px); }
+
+/* شريط المعلومات */
+.facts { display: grid; grid-template-columns: repeat(3, 1fr); background: #fff; border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 12px 30px rgba(15,42,82,.10); margin-top: -56px; position: relative; overflow: hidden; }
+.facts div { padding: 16px 18px; text-align: center; border-inline-start: 1px solid var(--line); }
+.facts div:first-child { border-inline-start: 0; }
+.facts b { display: block; font-size: 26px; font-weight: 900; color: var(--navy); line-height: 1.2; }
+.facts span { color: var(--muted); font-size: 14px; font-weight: 700; } .det { font-style: normal; }
+
+/* الأقسام */
+h2.sec { display: flex; align-items: center; gap: 10px; font-size: 24px; font-weight: 900; color: var(--navy); margin: 34px 0 14px; }
+h2.sec::after { content: ''; flex: 1; height: 2px; background: linear-gradient(90deg, var(--line), transparent); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 16px; }
+.card { position: relative; background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 20px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 4px 14px rgba(15,42,82,.05); transition: transform .15s, box-shadow .15s; }
+.card:hover { transform: translateY(-3px); box-shadow: 0 12px 26px rgba(15,42,82,.12); }
+.card .num { position: absolute; top: 16px; left: 18px; font-size: 34px; font-weight: 900; color: #eef2f8; line-height: 1; }
+.card .ic { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; background: var(--c); color: #fff; }
+.card .ic svg { width: 28px; height: 28px; }
+.card h3 { margin: 0; font-size: 20px; font-weight: 900; line-height: 1.4; }
+.card p { margin: 0; color: var(--muted); font-size: 15.5px; flex: 1; }
+.meta { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 4px; }
+.badge { font-size: 13px; font-weight: 700; color: var(--c); background: color-mix(in srgb, var(--c) 10%, #fff); border: 1px solid color-mix(in srgb, var(--c) 30%, #fff); border-radius: 999px; padding: 1px 12px; }
+.btn { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 8px 18px; border-radius: 12px; background: var(--navy); color: #fff; text-decoration: none; font-weight: 700; font-size: 15.5px; }
+.btn:hover { background: var(--navy2); }
+.btn:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.url { display: none; }
+.yr { direction: ltr; unicode-bidi: isolate; white-space: nowrap; display: inline-block; }
+.facts b .yr { font-size: inherit; color: inherit; font-weight: 900; }
+
+/* QR والتذييل */
+.scan { display: flex; align-items: center; gap: 20px; background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 18px 22px; margin: 34px 0 0; }
+.scan img { width: 116px; height: 116px; flex: none; }
+.scan h3 { margin: 0 0 4px; color: var(--navy); font-size: 19px; }
+.scan p { margin: 0; color: var(--muted); }
+.scan code { direction: ltr; display: inline-block; font-family: inherit; font-weight: 700; color: var(--navy2); }
+.sign { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 30px 0 10px; text-align: center; }
+.sign div { border-top: 3px solid var(--gold); padding-top: 10px; }
+.sign span { display: block; color: var(--muted); font-size: 14px; font-weight: 700; }
+.sign b { font-size: 17px; }
+footer { text-align: center; color: var(--muted); font-size: 14px; padding: 16px 0 30px; }
+
+@media (max-width: 640px) {
+  .facts b { font-size: 21px; } .facts div { padding: 12px 8px; } .det { display: none; }
+  .scan { flex-direction: column; text-align: center; }
+  .sign { grid-template-columns: 1fr; }
+}
+@media print {
+  @page { size: A4; margin: 14mm; }
+  body { background: #fff; }
+  .hero { padding: 18px 0 30px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .facts { margin-top: 12px; box-shadow: none; }
+  .card, .scan, .sign { break-inside: avoid; box-shadow: none; }
+  footer { display: none; }
+  h2.sec { break-after: avoid; } .scan { margin-top: 16px; } .sign { margin-top: 16px; }
+  .btn { display: none; }
+  .url { display: block; direction: ltr; text-align: left; font-size: 11px; color: var(--navy2); word-break: break-all; }
+  .card .ic, .badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div class="org"><div><b>مملكة البحرين · وزارة التربية والتعليم</b><br>مدرسة أبوصيبع الابتدائية للبنين — Abusaiba Primary Boys School</div><span class="year">العام الدراسي <span class="yr">2026–2027</span></span></div>
+    <div class="title">
+      <p class="kicker">دليل توثيقي</p>
+      <h1>مشاريع المدرسة ومبادراتها</h1>
+      <div class="rule"></div>
+      <p>يجمع هذا الدليل وثائق المدرسة ومنصّاتها ومشاريعها الرقمية في مكان واحد، ليسهل الاطلاع عليها ومتابعة أثرها في التعليم والتعلّم.</p>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="facts" aria-label="ملخّص">
+    <div><b id="nItems">5</b><span>مشاريع ووثائق</span></div>
+    <div><b>3</b><span>فئات مستفيدة<em class="det">: الطلبة · المعلمون · أولياء الأمور</em></span></div>
+    <div><b><span class="yr">2026–2027</span></b><span>العام الدراسي</span></div>
+  </section>
+
+  <h2 class="sec">المعلمون والأقسام الأكاديمية</h2>
+  <div class="grid">
+    <article class="card" style="--c:#1b4b8f">
+      <span class="num">01</span>
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M9 7h7M9 11h5"/></svg></span>
+      <h3>دليل المعلم المستجد</h3>
+      <p>دليل يعرّف المعلم الجديد بالمدرسة وأنظمتها وإجراءاتها، ليبدأ عمله بثقة ويندمج سريعًا في فريقها.</p>
+      <div class="meta"><span class="badge">وثيقة PDF</span><a class="btn" href="https://drive.google.com/file/d/1cahpdyXOOKvgJTWg5OamF__czBJDl1xP/view?usp=sharing" target="_blank" rel="noopener">عرض الوثيقة ←</a></div>
+      <span class="url">https://drive.google.com/file/d/1cahpdyXOOKvgJTWg5OamF__czBJDl1xP/view</span>
+    </article>
+    <article class="card" style="--c:#0f7a5c">
+      <span class="num">02</span>
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v6L4.5 18.5A2 2 0 0 0 6.3 21h11.4a2 2 0 0 0 1.8-2.5L14 8V2"/><path d="M8.5 2h7M7 15h10"/></svg></span>
+      <h3>برامج الرياضيات والعلوم</h3>
+      <p>روابط البرامج والمنصّات الرقمية التي يوظّفها قسما الرياضيات والعلوم في التدريس والتدريب والتقويم.</p>
+      <div class="meta"><span class="badge">وثيقة PDF</span><a class="btn" href="https://drive.google.com/file/d/1O4w2EPGc362_adfraNKUxaod3pYMzokN/view?usp=sharing" target="_blank" rel="noopener">عرض الوثيقة ←</a></div>
+      <span class="url">https://drive.google.com/file/d/1O4w2EPGc362_adfraNKUxaod3pYMzokN/view</span>
+    </article>
+    <article class="card" style="--c:#b45309">
+      <span class="num">03</span>
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3.2"/><path d="M3 21v-1.5A5.5 5.5 0 0 1 8.5 14h1A5.5 5.5 0 0 1 15 19.5V21"/><circle cx="17.5" cy="8.5" r="2.3"/><path d="M16.5 14H17a4 4 0 0 1 4 4v1"/></svg></span>
+      <h3>روابط قسم نظام الفصل</h3>
+      <p>الأدوات والموارد الرقمية التي يعتمدها معلمو الفصل في الصفوف الأولى لدعم تعلّم الطلبة ومتابعتهم.</p>
+      <div class="meta"><span class="badge">وثيقة PDF</span><a class="btn" href="https://drive.google.com/file/d/1tW2jreaA9wp2AMfM6oKZFUu6xozotFHV/view?usp=sharing" target="_blank" rel="noopener">عرض الوثيقة ←</a></div>
+      <span class="url">https://drive.google.com/file/d/1tW2jreaA9wp2AMfM6oKZFUu6xozotFHV/view</span>
+    </article>
+  </div>
+
+  <h2 class="sec">المنصّات الرقمية للمدرسة</h2>
+  <div class="grid">
+    <article class="card" style="--c:#6d28d9">
+      <span class="num">04</span>
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/><path d="M8.5 10.5l2 2 4-4"/></svg></span>
+      <h3>منصة تطبيقات أبوصيبع التعليمية</h3>
+      <p>تطبيقات تعليمية من تطوير المدرسة يتعلّم بها الطلبة من الصف أو البيت: البرمجة، والأمان الرقمي، وألعاب اللغة العربية، إلى جانب أدوات للمعلمين.</p>
+      <div class="meta"><span class="badge">موقع إلكتروني</span><a class="btn" href="https://abusaiba-apps.com/" target="_blank" rel="noopener">زيارة المنصة ←</a></div>
+      <span class="url">https://abusaiba-apps.com/</span>
+    </article>
+    <article class="card" style="--c:#be185d">
+      <span class="num">05</span>
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/><path d="M10 20v-5h4v5"/></svg></span>
+      <h3>المنصة المدرسية لأولياء الأمور</h3>
+      <p>صفحة واحدة تجمع روابط التواصل والخدمات المدرسية لأولياء الأمور للعام الدراسي <span class="yr">2026–2027</span>.</p>
+      <div class="meta"><span class="badge">منصة روابط</span><a class="btn" href="https://linktr.ee/Abusaibaschool" target="_blank" rel="noopener">زيارة المنصة ←</a></div>
+      <span class="url">https://linktr.ee/Abusaibaschool</span>
+    </article>
+  </div>
+
+  <section class="scan">
+    <img src="qr.svg" alt="رمز QR لهذا الدليل">
+    <div><h3>افتح الدليل على هاتفك</h3><p>امسح الرمز للوصول إلى هذا الدليل وروابطه من أي جهاز: <code>abusaiba-apps.com/dalil</code></p></div>
+  </section>
+
+  <section class="sign" aria-label="فريق الإعداد">
+    <div><span>اختصاصي تكنولوجيا التعليم</span><b>أ. جهاد الدمستاني</b></div>
+    <div><span>رئيس فريق التمكين الرقمي</span><b>أ. ابراهيم حبيب</b></div>
+    <div><span>مدير المدرسة</span><b>أ. حسين علي الدرازي</b></div>
+  </section>
+</main>
+<footer>مدرسة أبوصيبع الابتدائية للبنين · مملكة البحرين</footer>
+<script>document.getElementById('nItems').textContent = document.querySelectorAll('.card').length;</script>
+</body>
+</html>

@@ -19,7 +19,14 @@
 </header>
 
 <main class="wrap">
-  <section class="apps" aria-label="التطبيقات">
+  <div class="tabs" role="tablist" aria-label="الأقسام">
+    <button class="tab" role="tab" id="tab-students" aria-controls="students" aria-selected="true"><span>🎒</span><b>تطبيقات الطلبة</b></button>
+    <button class="tab" role="tab" id="tab-teachers" aria-controls="teachers" aria-selected="false"><span>👨‍🏫</span><b>أدوات المعلمين</b></button>
+  </div>
+  <section class="panel" id="students" role="tabpanel" aria-labelledby="tab-students">
+    <h2 class="section-t">تطبيقات الطلبة <span dir="ltr">Student Apps</span></h2>
+    <p class="section-s">نتعلّم ونلعب ونحصل على الشهادات</p>
+    <div class="apps">
     <article class="app" style="--c:#6c3cf0">
       <img src="coder.png" alt="" width="96" height="96">
       <div class="body">
@@ -51,11 +58,13 @@
       </div>
       <a class="btn" href="arabic/">افتح التطبيق ←</a>
     </article>
+    </div>
   </section>
 
-  <h2 class="section-t">أدوات أبوصيبع للمعلمين <span dir="ltr">Abusaiba Teacher Tools</span></h2>
-  <p class="section-s">أدوات ذكية .. لحصة أكثر تفاعلاً</p>
-  <section class="apps teachers" aria-label="أدوات أبوصيبع للمعلمين">
+  <section class="panel teachers" id="teachers" role="tabpanel" aria-labelledby="tab-teachers" hidden>
+    <h2 class="section-t">أدوات أبوصيبع للمعلمين <span dir="ltr">Teacher Tools</span></h2>
+    <p class="section-s">أدوات ذكية .. لحصة أكثر تفاعلاً</p>
+    <div class="apps">
     <article class="app" style="--c:#2e6b4e">
       <img src="azr.png" alt="" width="96" height="96">
       <div class="body">
@@ -86,6 +95,7 @@
       </div>
       <a class="btn" href="https://moebh-my.sharepoint.com/:u:/g/personal/790607140_moe_bh/IQBPi8rK9RU0R6RsjA5wFrCnAcz2wYU29lxemHYa9QEiArg?e=XoP1Kv" target="_blank" rel="noopener">حمّل البرنامج ←</a>
     </article>
+    </div>
   </section>
 
   <section class="help">
@@ -99,6 +109,18 @@
     <p class="note">⚠️ تقدّمك يُحفظ على جهازك فقط. استعمل الجهاز والمتصفح نفسيهما دائماً، وأرسل كل شهادة تحصل عليها لمعلّمك من داخل التطبيق.</p>
   </section>
 </main>
+<script>
+// التبويب: يظهر قسم واحد، ويتذكّره الرابط (#teachers أو #students)
+(function () {
+  var tabs = document.querySelectorAll('.tab');
+  function show(id, push) {
+    tabs.forEach(function (t) { var on = t.getAttribute('aria-controls') === id; t.setAttribute('aria-selected', on); document.getElementById(t.getAttribute('aria-controls')).hidden = !on; });
+    if (push) history.replaceState(null, '', '#' + id);
+  }
+  tabs.forEach(function (t) { t.onclick = function () { show(t.getAttribute('aria-controls'), true); }; });
+  show(location.hash === '#teachers' ? 'teachers' : 'students', false);
+})();
+</script>
 
 <footer>
   <div class="wrap">
