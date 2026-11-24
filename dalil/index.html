@@ -71,23 +71,11 @@ h3.sub { margin: 18px 0 10px; font-size: 18px; color: var(--navy); } h3.sub smal
 .vid b { padding: 0 12px; font-size: 14.5px; line-height: 1.55; }
 .vid small { padding: 0 12px 10px; color: var(--muted); font-weight: 700; font-size: 13px; margin-top: auto; }
 
-/* بطاقة AOLAS العريضة وتقريرها القابل للطيّ */
+/* بطاقة AOLAS العريضة */
 .card.wide { margin-top: 16px; }
 .wide-head { display: flex; align-items: center; gap: 14px; } .wide-head .en { margin: 0; color: var(--c); font-weight: 700; font-size: 14px; flex: none; }
 .feats { list-style: none; padding: 0; margin: 2px 0 0; display: flex; flex-wrap: wrap; gap: 6px; }
 .feats li { font-size: 13.5px; font-weight: 700; color: var(--navy); background: #eef1fb; border-radius: 999px; padding: 2px 12px; }
-.report { border: 1px solid var(--line); border-radius: 14px; background: var(--bg); margin-top: 6px; }
-.report summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 12px 14px; font-size: 15.5px; }
-.report summary::-webkit-details-marker { display: none; }
-.report summary::after { content: '▾'; margin-inline-start: auto; color: var(--navy); font-size: 18px; transition: transform .2s; }
-.report[open] summary::after { transform: rotate(180deg); }
-.report summary small { color: var(--muted); font-weight: 700; }
-.report summary:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; border-radius: 14px; }
-.shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 12px; padding: 0 14px 14px; }
-.shot { display: flex; flex-direction: column; background: #fff; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; text-decoration: none; color: var(--ink); }
-.shot img { width: 100%; aspect-ratio: 4 / 3; object-fit: contain; object-position: top; background: #fff; display: block; border-bottom: 1px solid var(--line); }
-.shot span { padding: 8px 10px; font-size: 14px; font-weight: 700; }
-.shot:hover { box-shadow: 0 8px 18px rgba(15,42,82,.12); } .shot:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 
 /* QR والتذييل */
 .scan { display: flex; align-items: center; gap: 20px; background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 18px 22px; margin: 34px 0 0; }
@@ -104,6 +92,8 @@ footer { text-align: center; color: var(--muted); font-size: 14px; padding: 16px
 @media (max-width: 640px) {
   .facts b { font-size: 21px; } .facts div { padding: 12px 8px; } .det { display: none; }
   .scan { flex-direction: column; text-align: center; }
+  .facts { grid-template-columns: 1fr 1fr; } .facts div:nth-child(3) { border-inline-start: 0; } .facts div:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .yt-head { grid-template-columns: 1fr; text-align: center; justify-items: center; }
   .facts { grid-template-columns: 1fr 1fr; } .facts div:nth-child(3) { border-inline-start: 0; } .facts div:nth-child(n+3) { border-top: 1px solid var(--line); }
   .yt-head { grid-template-columns: 1fr; text-align: center; justify-items: center; }
   .facts { grid-template-columns: 1fr 1fr; } .facts div:nth-child(3) { border-inline-start: 0; } .facts div:nth-child(n+3) { border-top: 1px solid var(--line); }
@@ -230,17 +220,7 @@ footer { text-align: center; color: var(--muted); font-size: 14px; padding: 16px
         <div><h3>AOLAS — نظام متابعة حضور التعلّم عن بُعد</h3><p class="en" dir="ltr">Abusaiba Online Learning Attendance System</p></div></div>
       <p>نظام من تطوير المدرسة يحلّل تقارير حضور حصص مايكروسوفت تيمز وتفاعل الطلبة في دقائق، ويُخرج لإدارة المدرسة لوحة مؤشرات وتقارير جاهزة، مع الحفاظ على خصوصية بيانات الطلبة إذ يعمل محليًا على جهاز المدرسة.</p>
       <ul class="feats"><li>حضور كل حصة من تقارير تيمز</li><li>تفاعل الطلبة في الفرق</li><li>لوحة مؤشرات إدارية</li><li>تحليل الحصص وتذبذب الحضور</li><li>لوحة شرف الصفوف وأبطال المدرسة</li><li>شهادات تقدير آلية</li><li>صور ملخّصة جاهزة للواتساب</li><li>تقارير PDF وجداول إكسل</li></ul>
-      <details class="report">
-        <summary><span class="badge">نظام محلّي</span><b>📊 نموذج من تقرير يوم 30 أبريل 2026</b><small>(6 صور) — اضغط للعرض أو الإخفاء</small></summary>
-        <div class="shots">
-          <a class="shot" href="img/aolas/summary.webp" target="_blank" rel="noopener"><img src="img/aolas/summary-t.webp" alt="ملخّص الحضور اليومي" loading="lazy"><span>ملخّص الحضور اليومي</span></a>
-          <a class="shot" href="img/aolas/attendance.webp" target="_blank" rel="noopener"><img src="img/aolas/attendance-t.webp" alt="مقارنة نسب الحضور حسب الصف" loading="lazy"><span>مقارنة نسب الحضور حسب الصف</span></a>
-          <a class="shot" href="img/aolas/interaction.webp" target="_blank" rel="noopener"><img src="img/aolas/interaction-t.webp" alt="مقارنة تفاعل الصفوف" loading="lazy"><span>مقارنة تفاعل الصفوف</span></a>
-          <a class="shot" href="img/aolas/periods.webp" target="_blank" rel="noopener"><img src="img/aolas/periods-t.webp" alt="تحليل الحصص" loading="lazy"><span>تحليل الحصص</span></a>
-          <a class="shot" href="img/aolas/fluctuation.webp" target="_blank" rel="noopener"><img src="img/aolas/fluctuation-t.webp" alt="تحليل تذبذب حضور الصفوف" loading="lazy"><span>تحليل تذبذب حضور الصفوف</span></a>
-          <a class="shot" href="img/aolas/honor.webp" target="_blank" rel="noopener"><img src="img/aolas/honor-t.webp" alt="لوحة شرف الصفوف" loading="lazy"><span>لوحة شرف الصفوف</span></a>
-        </div>
-      </details>
+      <div class="meta"><span class="badge">نظام محلّي يعمل على جهاز المدرسة</span></div>
     </article>
 
   <h2 class="sec">قناة اليوتيوب التعليمية</h2>
