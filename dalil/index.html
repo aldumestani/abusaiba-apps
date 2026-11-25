@@ -77,6 +77,21 @@ h3.sub { margin: 18px 0 10px; font-size: 18px; color: var(--navy); } h3.sub smal
 .feats { list-style: none; padding: 0; margin: 2px 0 0; display: flex; flex-wrap: wrap; gap: 6px; }
 .feats li { font-size: 13.5px; font-weight: 700; color: var(--navy); background: #eef1fb; border-radius: 999px; padding: 2px 12px; }
 
+/* تبويبات الدليل */
+.dtabs { position: sticky; top: 0; z-index: 5; display: flex; gap: 6px; overflow-x: auto; margin: 22px 0 0; padding: 10px 0; background: rgba(245,247,251,.94); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); scrollbar-width: none; }
+.dtabs::-webkit-scrollbar { display: none; }
+.dtabs button { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; gap: 7px; min-height: 50px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 14px; background: #fff; font: inherit; font-weight: 700; font-size: 15.5px; color: var(--muted); cursor: pointer; white-space: nowrap; }
+.dtabs button span { font-size: 19px; }
+.dtabs button em { font-style: normal; font-size: 12.5px; font-weight: 700; background: var(--bg); color: var(--navy); border-radius: 999px; padding: 0 8px; }
+.dtabs button:hover { border-color: var(--navy2); color: var(--navy); }
+.dtabs button[aria-selected="true"] { background: var(--navy); border-color: var(--navy); color: #fff; }
+.dtabs button[aria-selected="true"] em { background: var(--gold); color: var(--navy); }
+.dtabs button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.dpanel[hidden] { display: none; }
+@media (min-width: 861px) { .dtabs button em { display: none; } .dtabs button { font-size: 14.5px; gap: 5px; padding: 6px 8px; } .dtabs { gap: 5px; } }
+@media (max-width: 860px) { .dtabs { margin: 18px -16px 0; padding: 10px 16px; } .dtabs button { flex: 0 0 auto; } }
+@media print { .dtabs { display: none; } .dpanel[hidden] { display: block; } }
+
 /* QR والتذييل */
 .scan { display: flex; align-items: center; gap: 20px; background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 18px 22px; margin: 34px 0 0; }
 .scan img { width: 116px; height: 116px; flex: none; }
@@ -92,6 +107,8 @@ footer { text-align: center; color: var(--muted); font-size: 14px; padding: 16px
 @media (max-width: 640px) {
   .facts b { font-size: 21px; } .facts div { padding: 12px 8px; } .det { display: none; }
   .scan { flex-direction: column; text-align: center; }
+  .facts { grid-template-columns: 1fr 1fr; } .facts div:nth-child(3) { border-inline-start: 0; } .facts div:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .yt-head { grid-template-columns: 1fr; text-align: center; justify-items: center; }
   .facts { grid-template-columns: 1fr 1fr; } .facts div:nth-child(3) { border-inline-start: 0; } .facts div:nth-child(n+3) { border-top: 1px solid var(--line); }
   .yt-head { grid-template-columns: 1fr; text-align: center; justify-items: center; }
   .facts { grid-template-columns: 1fr 1fr; } .facts div:nth-child(3) { border-inline-start: 0; } .facts div:nth-child(n+3) { border-top: 1px solid var(--line); }
@@ -136,12 +153,15 @@ footer { text-align: center; color: var(--muted); font-size: 14px; padding: 16px
 
 <main class="wrap">
   <section class="facts" aria-label="ملخّص">
-    <div><b>11</b><span>مشاريع ووثائق</span></div>
+    <div><b>12</b><span>مشاريع ووثائق</span></div>
     <div><b>16</b><span>فيديو تعليمي منذ 2025</span></div>
     <div><b>3</b><span>فئات مستفيدة<em class="det">: الطلبة · المعلمون · أولياء الأمور</em></span></div>
     <div><b><span class="yr">2026–2027</span></b><span>العام الدراسي</span></div>
   </section>
 
+  <nav class="dtabs" role="tablist" aria-label="أقسام الدليل"><button role="tab" id="tab-academic" aria-controls="academic" aria-selected="false"><span>🎓</span><b>الأقسام الأكاديمية</b><em>4</em></button><button role="tab" id="tab-development" aria-controls="development" aria-selected="false"><span>👨‍🏫</span><b>التنمية المهنية</b><em>2</em></button><button role="tab" id="tab-followup" aria-controls="followup" aria-selected="false"><span>📈</span><b>المتابعة والتقويم</b><em>2</em></button><button role="tab" id="tab-support" aria-controls="support" aria-selected="false"><span>🤝</span><b>برامج الدعم</b><em>1</em></button><button role="tab" id="tab-platforms" aria-controls="platforms" aria-selected="false"><span>💻</span><b>المنصّات الرقمية</b><em>4</em></button></nav>
+
+  <section class="dpanel" id="academic" role="tabpanel" aria-labelledby="tab-academic">
   <h2 class="sec">المعلمون والأقسام الأكاديمية</h2>
   <div class="grid">
     <article class="card" style="--c:#0f7a5c">
@@ -178,18 +198,13 @@ footer { text-align: center; color: var(--muted); font-size: 14px; padding: 16px
     </article>
   </div>
 
-  <h2 class="sec">المتابعة والتقويم والتنمية المهنية</h2>
+  </section>
+
+  <section class="dpanel" id="development" role="tabpanel" aria-labelledby="tab-development">
+  <h2 class="sec">التنمية المهنية</h2>
   <div class="grid">
-    <article class="card" style="--c:#475569">
-      <span class="num">05</span>
-      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span>
-      <h3>مؤشرات الانضباط الطلابي</h3>
-      <p>مؤشرات ترصدها المدرسة لمتابعة انضباط الطلبة والتزامهم، وتستند إليها في خطط تحسين السلوك.</p>
-      <div class="meta"><span class="badge">مجلد</span><a class="btn" href="https://drive.google.com/drive/folders/1hgihFDAL5xWPx75DemWhBbyVkggdksNj?usp=sharing" target="_blank" rel="noopener">فتح المجلد ←</a></div>
-      <span class="url">https://drive.google.com/drive/folders/1hgihFDAL5xWPx75DemWhBbyVkggdksNj</span>
-    </article>
     <article class="card" style="--c:#1b4b8f">
-      <span class="num">06</span>
+      <span class="num">05</span>
       <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M9 7h7M9 11h5"/></svg></span>
       <h3>دليل المعلم المستجد</h3>
       <p>دليل يعرّف المعلم الجديد بالمدرسة وأنظمتها وإجراءاتها، ليبدأ عمله بثقة ويندمج سريعًا في فريقها.</p>
@@ -197,12 +212,27 @@ footer { text-align: center; color: var(--muted); font-size: 14px; padding: 16px
       <span class="url">https://drive.google.com/file/d/1cahpdyXOOKvgJTWg5OamF__czBJDl1xP/view</span>
     </article>
     <article class="card" style="--c:#9333ea">
-      <span class="num">07</span>
+      <span class="num">06</span>
       <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="14" height="14" rx="2"/><path d="M16 10l6-4v12l-6-4z"/></svg></span>
       <h3>فيديوهات الورش التدريبية</h3>
       <p>تسجيلات الورش التدريبية التي قُدّمت لمعلمي المدرسة، مرجعٌ للتنمية المهنية يمكن الرجوع إليه في أي وقت.</p>
       <div class="meta"><span class="badge">مجلد فيديو</span><a class="btn" href="https://drive.google.com/drive/folders/1IDMjdamoV8ywc9gOLpu2I7oqwtYHuLpF?usp=sharing" target="_blank" rel="noopener">فتح المجلد ←</a></div>
       <span class="url">https://drive.google.com/drive/folders/1IDMjdamoV8ywc9gOLpu2I7oqwtYHuLpF</span>
+    </article>
+  </div>
+
+  </section>
+
+  <section class="dpanel" id="followup" role="tabpanel" aria-labelledby="tab-followup">
+  <h2 class="sec">المتابعة والتقويم</h2>
+  <div class="grid">
+    <article class="card" style="--c:#475569">
+      <span class="num">07</span>
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span>
+      <h3>مؤشرات الانضباط الطلابي</h3>
+      <p>مؤشرات ترصدها المدرسة لمتابعة انضباط الطلبة والتزامهم، وتستند إليها في خطط تحسين السلوك.</p>
+      <div class="meta"><span class="badge">مجلد</span><a class="btn" href="https://drive.google.com/drive/folders/1hgihFDAL5xWPx75DemWhBbyVkggdksNj?usp=sharing" target="_blank" rel="noopener">فتح المجلد ←</a></div>
+      <span class="url">https://drive.google.com/drive/folders/1hgihFDAL5xWPx75DemWhBbyVkggdksNj</span>
     </article>
     <article class="card" style="--c:#0369a1">
       <span class="num">08</span>
@@ -214,10 +244,28 @@ footer { text-align: center; color: var(--muted); font-size: 14px; padding: 16px
     </article>
   </div>
 
+  </section>
+
+  <section class="dpanel" id="support" role="tabpanel" aria-labelledby="tab-support">
+  <h2 class="sec">برامج الدعم</h2>
+  <div class="grid">
+    <article class="card" style="--c:#db2777">
+      <span class="num">09</span>
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg></span>
+      <h3>برنامج أساس</h3>
+      <p>برنامج المدرسة لدعم الفئات الطلابية ومتابعتها وتمكينها، ويضمّ مجلده مواد البرنامج وشواهده.</p>
+      <div class="meta"><span class="badge">مجلد</span><a class="btn" href="https://drive.google.com/drive/folders/1Z5DD6_H4GlpB4uQsM7W0FRnPd_KNOJ59" target="_blank" rel="noopener">فتح المجلد ←</a></div>
+      <span class="url">https://drive.google.com/drive/folders/1Z5DD6_H4GlpB4uQsM7W0FRnPd_KNOJ59</span>
+    </article>
+  </div>
+
+  </section>
+
+  <section class="dpanel" id="platforms" role="tabpanel" aria-labelledby="tab-platforms">
   <h2 class="sec">المنصّات الرقمية للمدرسة</h2>
   <div class="grid">
     <article class="card" style="--c:#6d28d9">
-      <span class="num">09</span>
+      <span class="num">10</span>
       <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/><path d="M8.5 10.5l2 2 4-4"/></svg></span>
       <h3>منصة تطبيقات أبوصيبع التعليمية</h3>
       <p>تطبيقات تعليمية من تطوير المدرسة يتعلّم بها الطلبة من الصف أو البيت: البرمجة، والأمان الرقمي، وألعاب اللغة العربية، إلى جانب أدوات للمعلمين.</p>
@@ -225,7 +273,7 @@ footer { text-align: center; color: var(--muted); font-size: 14px; padding: 16px
       <span class="url">https://abusaiba-apps.com/</span>
     </article>
     <article class="card" style="--c:#be185d">
-      <span class="num">10</span>
+      <span class="num">11</span>
       <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/><path d="M10 20v-5h4v5"/></svg></span>
       <h3>المنصة المدرسية لأولياء الأمور</h3>
       <p>صفحة واحدة تجمع روابط التواصل والخدمات المدرسية لأولياء الأمور للعام الدراسي <span class="yr">2026–2027</span>.</p>
@@ -235,7 +283,7 @@ footer { text-align: center; color: var(--muted); font-size: 14px; padding: 16px
   </div>
 
   <article class="card wide" style="--c:#4f46e5">
-      <span class="num">11</span>
+      <span class="num">12</span>
       <div class="wide-head"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></span>
         <div><h3>AOLAS — نظام متابعة حضور التعلّم عن بُعد</h3><p class="en" dir="ltr">Abusaiba Online Learning Attendance System</p></div></div>
       <p>نظام من تطوير المدرسة يحلّل تقارير حضور حصص مايكروسوفت تيمز وتفاعل الطلبة في دقائق، ويُخرج لإدارة المدرسة لوحة مؤشرات وتقارير جاهزة، مع الحفاظ على خصوصية بيانات الطلبة إذ يعمل محليًا على جهاز المدرسة.</p>
@@ -272,6 +320,7 @@ footer { text-align: center; color: var(--muted); font-size: 14px; padding: 16px
       <a class="vid" href="https://www.youtube.com/watch?v=HDFi02rBjgk" target="_blank" rel="noopener"><span class="th"><img src="https://i.ytimg.com/vi/HDFi02rBjgk/mqdefault.jpg" alt="" loading="lazy" width="320" height="180"><i>▶</i></span><b>استخدام مايكروسوفت تيمز لأولياء الأمور في البحرين</b><small>سبتمبر 2025</small></a>
       <a class="vid" href="https://www.youtube.com/watch?v=5PbxxKTfr0Y" target="_blank" rel="noopener"><span class="th"><img src="https://i.ytimg.com/vi/5PbxxKTfr0Y/mqdefault.jpg" alt="" loading="lazy" width="320" height="180"><i>▶</i></span><b>تحميل برنامج mBlock</b><small>مارس 2025</small></a>
   </div>
+  </section>
 
   <section class="scan">
     <img src="qr.svg" alt="رمز QR لهذا الدليل">
@@ -285,5 +334,17 @@ footer { text-align: center; color: var(--muted); font-size: 14px; padding: 16px
   </section>
 </main>
 <footer>مدرسة أبوصيبع الابتدائية للبنين · مملكة البحرين</footer>
+<script>
+(function () { // تبويبات الدليل: قسم واحد في كل مرة، ويتذكّره الرابط
+  var tabs = [].slice.call(document.querySelectorAll('.dtabs button'));
+  function show(id, push) {
+    if (!document.getElementById(id)) id = tabs[0].getAttribute('aria-controls');
+    tabs.forEach(function (t) { var on = t.getAttribute('aria-controls') === id; t.setAttribute('aria-selected', on); document.getElementById(t.getAttribute('aria-controls')).hidden = !on; if (on && push) t.scrollIntoView({ inline: 'center', block: 'nearest' }); });
+    if (push) history.replaceState(null, '', '#' + id);
+  }
+  tabs.forEach(function (t) { t.onclick = function () { show(t.getAttribute('aria-controls'), true); }; });
+  show(location.hash.slice(1), false);
+})();
+</script>
 </body>
 </html>
